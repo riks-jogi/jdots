@@ -1,3 +1,9 @@
+/**
+ * Põhiline autor: Mihkel Martin Kasterpalu
+ *
+ * Checksum koodi baseerub sellel: https://www.geeksforgeeks.org/how-to-generate-md5-checksum-for-files-in-java/
+ */
+
 import java.io.*;
 import java.security.MessageDigest;
 import java.util.Arrays;
