@@ -1,10 +1,8 @@
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.LsRemoteCommand;
-import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
@@ -43,17 +41,21 @@ public class GitWrangler {
     }
 
     public boolean pullRemote() throws GitAPIException {
-        PullResult result = git.pull().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, secret)).call();
-        return result.isSuccessful();
+        PullCommand result = git.pull();
+        result.setProgressMonitor(new SimpleMonitor());
+        result.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, secret));
+        PullResult success = result.call();
+        return success.isSuccessful();
     }
 
-    public void addCommitPush(String message) throws GitAPIException {
+    public String addCommitPush(String message) throws GitAPIException {
         git.add().addFilepattern(".").call();
         git.commit().setMessage(message).call();
         PushCommand pushCommand = git.push();
         pushCommand.setProgressMonitor(new SimpleMonitor());
         pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, secret));
-        pushCommand.call();
+        PushResult result = (PushResult) pushCommand.call();
+        return result.getMessages();
     }
 }
 
