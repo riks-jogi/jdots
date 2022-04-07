@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 
 public class FileWrangler {
-    private List<DotFile> dotfailid = new ArrayList<>();
+    private final List<DotFile> dotfailid = new ArrayList<>();
     private final String gitPath;
     private final String databasePath;
 
@@ -22,7 +22,7 @@ public class FileWrangler {
         this.dotfailid.removeIf(file -> Objects.equals(file.getNimi(), dotfailiInfo.getName()));
     }
 
-    public FileWrangler(String gitPath, String databasePath) throws Exception {
+    public FileWrangler(String gitPath, String databasePath) {
         this.gitPath = gitPath;
         this.databasePath = databasePath;
         this.loeDatabaasistFailid(databasePath);
@@ -56,7 +56,6 @@ public class FileWrangler {
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
         for (DotFile file : this.dotfailid) {
-            System.out.println(file);
             printWriter.print(file.toDataString());
         }
         printWriter.close();
