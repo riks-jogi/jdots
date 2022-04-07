@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class App {
 
-    private static void gitAuth(GitWrangler repo){
+    private static void gitAuth(GitWrangler repo) {
         // Tegeleb git autentimisega
         // TODO: SSH authentication
 
@@ -37,13 +37,13 @@ public class App {
         Scanner scan = new Scanner(System.in);
 
         gitAuth(repo);
-        while (!repo.testAuth()){
+        while (!repo.testAuth()) {
             System.out.println("Authentication failed!");
             System.out.println("Retry? Y/n  ");
             String r = scan.nextLine();
             if (Objects.equals(r, "n") || Objects.equals(r, "N")) {
-                break;
-            }else {
+                return;
+            } else {
                 gitAuth(repo);
             }
         }
@@ -66,7 +66,8 @@ public class App {
         GitWrangler repo = new GitWrangler(gitPath);
         FileWrangler failisüsteem = new FileWrangler(gitPath, databasePath);
 
-        ui: while (true){
+        ui:
+        while (true) {
             System.out.println("Possible actions:\n1. Pull remote\n2. Sync files\n3. Add file to tracking\n4. Remove file from tracking\nE(xit)");
             String action = scan.nextLine();
             switch (action) {
@@ -91,9 +92,5 @@ public class App {
                     break ui;
             }
         }
-
-
-        // Scan registry and lookup diffs
-        uuendaFaile(failisüsteem);
     }
 }
