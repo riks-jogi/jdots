@@ -3,7 +3,6 @@ import org.eclipse.jgit.lib.ProgressMonitor;
 public class SimpleMonitor implements ProgressMonitor {
     @Override
     public void start(int totalTasks) {
-        System.out.println("Pushing to remote");
     }
 
     @Override
