@@ -13,7 +13,6 @@ public class App {
         Scanner scan = new Scanner(System.in);
 
         if (!Objects.equals(System.getenv("GIT_USER"), null)){
-            System.out.println(System.getenv("GIT_USER"));
             repo.auth();
         }
         else{
@@ -27,7 +26,24 @@ public class App {
 
     }
 
-    public static void main(String[] args) throws IOException, GitAPIException {
+    private static void gitPull(GitWrangler repo) throws GitAPIException {
+        Scanner scan = new Scanner(System.in);
+
+        gitAuth(repo);
+        while (!repo.testAuth()){
+            System.out.println("Authentication failed!");
+            System.out.println("Retry? Y/n  ");
+            String r = scan.nextLine();
+            if (Objects.equals(r, "n") || Objects.equals(r, "N")) {
+                break;
+            }else {
+                gitAuth(repo);
+            }
+        }
+        repo.pullRemote();
+    }
+
+    public static void main(String[] args) throws IOException {
         Scanner scan = new Scanner(System.in);
 
         // Banner and version info
@@ -40,23 +56,32 @@ public class App {
         System.out.println("Connecting to repo.");
         GitWrangler repo = new GitWrangler("./.data");
 
-        // User interactions
-        System.out.println("Pull remote? Y/n  ");
-        String pull = scan.nextLine();
-        if (Objects.equals(pull, "") || Objects.equals(pull, "y") || Objects.equals(pull, "Y")){
-            gitAuth(repo);
-            while (!repo.testAuth()){
-                System.out.println("Authentication failed:");
-                System.out.println("Retry? Y/n  ");
-                String r = scan.nextLine();
-                if (Objects.equals(r, "n") || Objects.equals(r, "N")) {
+        ui: while (true){
+            System.out.println("Possible actions:\n1. Pull remote\n2. Sync files\n3. Add file to tracking\n4. Remove file from tracking\nE(xit)");
+            String action = scan.nextLine();
+            switch (action) {
+                case "1":
+                    try {
+                        gitPull(repo);
+                    } catch (GitAPIException e) {
+                        System.out.println("Remote pull failed!");
+                    }
                     break;
-                }else {
-                    gitAuth(repo);
-                }
+                case "2":
+                    //sync
+                    break;
+                case "3":
+                    //add
+                    break;
+                case "4":
+                    //remove
+                    break;
+                default:
+                    System.out.println("Exiting..");
+                    break ui;
             }
-            repo.pullRemote();
         }
+
 
         // Scan registry and lookup diffs
 
