@@ -1,12 +1,14 @@
-/**
- * Põhiline autor: Mihkel Martin Kasterpalu
- * <p>
- * Checksum koodi baseerub sellel: https://www.geeksforgeeks.org/how-to-generate-md5-checksum-for-files-in-java/
- */
-
 import java.io.*;
 import java.util.*;
 
+/**
+ * Klass, mis loob, talletab ja lõpuks salvestab jälgitud dot failid fileindex'isse
+ * fileindexis on talletatud faili nimi, path süsteemis ja sisu MD5 checksum
+ *
+ * Fileindex'is on iga rida DotFile klassi loomiseks vajalik info. FileWrangler alguses loetakse
+ * fileindex'ist kõik read DotFile'ideks ja lisatakse dotfailid listi.
+ * Kõik failid, mis on dotfailid listis salvestatakse lõpuks fileindex faili.
+ */
 public class FileWrangler {
     private final List<DotFile> dotfailid = new ArrayList<>();
     private final String gitPath;
@@ -36,12 +38,17 @@ public class FileWrangler {
                 String[] failiInfo = dotfailiRead.nextLine().split(";");
                 this.dotfailid.add(new DotFile(failiInfo[0], failiInfo[1], failiInfo[2]));
             }
+            dotfailiRead.close();
+
         } catch (FileNotFoundException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // Kasutab DotFile sees kirjutatud meetodied, mis võrdlevad
+    // Trackitud faili viimast teadaolevad checksumi masinas oleva faili ja gitis oleva haili checksumidega
+    // Tagastab kõik DotFile'id, kus mingi võrdlus pole samaväärne (ehk kuskil failis muudatus)
     public List<DotFile> leiaUuendused() throws Exception {
         List<DotFile> uuendusegaFailid = new ArrayList<>();
         for (DotFile file : this.dotfailid) {
@@ -51,6 +58,7 @@ public class FileWrangler {
         return uuendusegaFailid;
     }
 
+    // Salvestab fileindex faili järgmiseks korraks kõikide jälgitud DotFile'ide nime, pathi ja checksumi
     public void salvestaNimedJaChecksumid() throws IOException {
         FileWriter fileWriter = new FileWriter(this.databasePath);
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -61,10 +69,10 @@ public class FileWrangler {
         printWriter.close();
     }
 
+    // Nende funktsioonide mõte on lihtsamalt main'is aru saada, mis fail kus muudetakse
     public void uuendaDotFailGit(DotFile dotfile) throws IOException {
         dotfile.uuendaGiti(this.gitPath);
     }
-
     public void uuendaDotFailKoahlik(DotFile dotfile) throws Exception {
         dotfile.uuendaKohalikku(this.gitPath);
         dotfile.uuendaChecksum();

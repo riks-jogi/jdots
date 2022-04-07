@@ -47,11 +47,11 @@ public class GitWrangler {
      */
     public boolean testAuth(){
         LsRemoteCommand test = git.lsRemote();
-        test.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.secret));
         try {
+            test.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.secret));
             test.call();
             return true;
-        } catch (GitAPIException e) {
+        } catch (NullPointerException | GitAPIException e) { // Kui username ja secret pole defineeritud või kui git ise katki
             return false;
         }
     }
