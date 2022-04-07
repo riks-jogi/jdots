@@ -102,7 +102,7 @@ public class App {
      * @param failisüsteem main funktsioonis defineeritud FileWrangler isend
      * @param task "add" või "remove", olenevalt mida kasutaja valis
      */
-    private static void addOrRemoveFile(FileWrangler failisüsteem, String task) {
+    private static boolean addOrRemoveFile(FileWrangler failisüsteem, String task) {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
@@ -111,9 +111,11 @@ public class App {
             if (Objects.equals(task, "add")) failisüsteem.lisaDotfail(dotFailPath);
             else if (Objects.equals(task, "remove")) failisüsteem.eemaldaDotfail(dotFailPath);
 
-            System.out.printf("'%s' was %s", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
+            System.out.printf("'%s' was %s\n", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
+            return true;
         } catch (Exception e) {
-            System.out.printf("'%s' not found", dotFailPath);
+            System.out.printf("'%s' not found\n", dotFailPath);
+            return false;
         }
     }
 
@@ -174,16 +176,20 @@ public class App {
                     repo.addCommitPush("Synced files");
                     break;
                 case "4":
-                    addOrRemoveFile(failisüsteem, "add");
-
-                    failisüsteem.salvestaNimedJaChecksumid();
-                    if (!repo.testAuth()) gitPull(repo);
-                    repo.addCommitPush("Added file");
+                    // Kui sai lisatud, uuenda fileindex sisu ja pushi giti
+                    if (addOrRemoveFile(failisüsteem, "add")) {
+                        failisüsteem.salvestaNimedJaChecksumid();
+                        if (!repo.testAuth()) gitPull(repo);
+                        repo.addCommitPush("Added file");
+                    }
                     break;
                 case "5":
-                    addOrRemoveFile(failisüsteem, "remove");
-
-                    failisüsteem.salvestaNimedJaChecksumid();
+                    // Kui sai eemaldatud, uuenda fileindex sisu ja ÄRA pushi giti
+                    // Ei pushi sest eemaldamine tähendab siin arvutis mitte syncimist
+                    // Mingis muus arvutis võibolla tahan seda faili synciga. Repos võiks ikka olla
+                    if (addOrRemoveFile(failisüsteem, "remove")) {
+                        failisüsteem.salvestaNimedJaChecksumid();
+                    }
                     break;
                 case "e":
                 case "E":

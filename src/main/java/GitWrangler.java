@@ -77,15 +77,13 @@ public class GitWrangler {
      * `git add * && git commit -m message && git push`
      *
      * @param message Commiti sõnum.
-     * @return String Commiti tulemus
      */
-    public String addCommitPush(String message) throws GitAPIException {
+    public void addCommitPush(String message) throws GitAPIException {
         git.add().addFilepattern(".").call();
         git.commit().setMessage(message).call();
         PushCommand pushCommand = git.push();
         pushCommand.setProgressMonitor(new SimpleMonitor());
         pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, secret));
-        PushResult result = (PushResult) pushCommand.call();
-        return result.getMessages();
+        pushCommand.call();
     }
 }
