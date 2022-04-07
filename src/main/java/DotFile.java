@@ -5,9 +5,24 @@ import java.util.Scanner;
 
 public class DotFile {
     private final String nimi;
+
     private final String path;
-    public String checksum;
+    private String checksum;
     private final MessageDigest digest = MessageDigest.getInstance("MD5");
+    private int muudatus = 0;
+
+    public String getChecksum() {
+        return checksum;
+    }
+    public void uuendaChecksum() throws Exception {
+        this.checksum = genereeriChecksum(this.path + this.nimi);
+    }
+    public int getMuudatus() {
+        return muudatus;
+    }
+    public String getNimi() {
+        return nimi;
+    }
 
     public DotFile(String nimi, String path) throws Exception {
         this.nimi = nimi;
@@ -25,14 +40,17 @@ public class DotFile {
         return Objects.equals(this.checksum, kontrollChecksum);
     }
 
-    public int kontrolliMuudatusi(String gitPath) throws Exception {
+    public boolean kontrolliMuudatusi(String gitPath) throws Exception {
         boolean kohalik = kontrolliMuudatusiKohalik();
         boolean git = kontrolliMuudatusiGit(gitPath);
 
-        if (git && kohalik) return -1;
-        else if (kohalik) return 1;
-        else if (git) return 2;
-        else return 0;
+        // Säti kohalik väärtus, selle kohta kus muudatus on
+        if (git && kohalik) this.muudatus = 3;
+        else if (git) this.muudatus = 2;
+        else if (kohalik) this.muudatus = 1;
+
+        // Tagasta kas fail on kuskil muutunud
+        return git || kohalik;
     }
 
     public void uuendaKohalikku(String gitPath) throws IOException {

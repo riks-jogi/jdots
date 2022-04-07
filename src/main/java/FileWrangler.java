@@ -5,26 +5,48 @@
  */
 
 import java.io.*;
-import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class FileWrangler {
-    /*
-    public static void salvestaNimedJaChecksumid(MessageDigest digest, String checksumFail, String[] dotFailid) throws Exception {
-        salvestaNimedJaChecksumid(digest, avaKirjutaja(checksumFail), Arrays.stream(dotFailid).map(File::new).toArray(File[]::new));
+    private List<DotFile> dotfailid = new ArrayList<>();
+
+    public void lisaDotfail(String pathJaNimi) throws Exception {
+        File dotfailiInfo = new File(pathJaNimi);
+        this.dotfailid.add(new DotFile(dotfailiInfo.getName(), dotfailiInfo.getParent()));
+    }
+    public void eemaldaDotfail(String pathJaNimi) {
+        File dotfailiInfo = new File(pathJaNimi);
+        this.dotfailid.removeIf(file -> Objects.equals(file.getNimi(), dotfailiInfo.getName()));
     }
 
-    public static void salvestaNimedJaChecksumid(MessageDigest digest, FileWriter checksumFail, File[] dotFailid) throws Exception {
-        for (File file : dotFailid) checksumFail.write(file + ";" + genereeriChecksum(digest, file) + "\n");
-        sulgeKirjtaja(checksumFail);
-        System.out.println("donerooski");
-    }
-*/
+    public List<DotFile> leiaUuendused(String gitPath) throws Exception {
+        List<DotFile> uuendusegaFailid = new ArrayList<>();
+        for (DotFile file: this.dotfailid) {
+            if (file.kontrolliMuudatusi(gitPath)) uuendusegaFailid.add(file);
+        }
 
-    public static void main(String[] args) throws Exception {
-        DotFile one = new DotFile(".one", ".data/");
-        System.out.println(one);
+        return uuendusegaFailid;
+    }
+
+    public void salvestaNimedJaChecksumid(String checksumFail) throws IOException {
+        FileWriter fileWriter = new FileWriter(checksumFail);
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+
+        for (DotFile file: this.dotfailid) {
+            printWriter.print(file.toDataString());
+        }
+        printWriter.close();
+    }
+
+    public void uuendaDotFailGit(DotFile dotfile, String gitPath) throws IOException {
+        dotfile.uuendaGiti(gitPath);
+    }
+    public void uuendaDotFailKoahlik(DotFile dotfile, String gitPath) throws Exception {
+        dotfile.uuendaKohalikku(gitPath);
+        dotfile.uuendaChecksum();
+    }
+
+    public List<DotFile> getDotfailid() {
+        return dotfailid;
     }
 }
