@@ -1,6 +1,6 @@
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -22,14 +22,6 @@ public class App {
             System.out.println("Git password: ");
             String pass = scan.nextLine();
             repo.auth(user, pass);
-        }
-    }
-
-    private static void uuendaFaile(FileWrangler failisüsteem) throws Exception {
-        List<DotFile> uuendustegaFailid = failisüsteem.leiaUuendused();
-        for (DotFile fail : uuendustegaFailid) {
-            System.out.println(fail);
-            System.out.println(fail.getMuudatus());
         }
     }
 
@@ -68,29 +60,87 @@ public class App {
 
         ui:
         while (true) {
-            System.out.println("Possible actions:\n1. Pull remote\n2. Sync files\n3. Add file to tracking\n4. Remove file from tracking\nE(xit)");
+            System.out.println("\nPossible actions:\n1. List tracked files\n2. Pull remote\n3. Sync files\n4. Add file to tracking\n5. Remove file from tracking\nE(xit)");
             String action = scan.nextLine();
             switch (action) {
                 case "1":
+                    System.out.println("Name:\t Path:");
+                    for (DotFile file: failisüsteem.getDotfailid()) {
+                        System.out.println(file);
+                    }
+                    break;
+                case "2":
                     try {
                         gitPull(repo);
                     } catch (GitAPIException e) {
                         System.out.println("Remote pull failed!");
                     }
                     break;
-                case "2":
-                    //sync
-                    break;
                 case "3":
-                    //add
+                    List<DotFile> uuendatudFailid = failisüsteem.leiaUuendused();
+                    for (DotFile fail: uuendatudFailid) {
+                        System.out.println("File\tPath\t\t\tChanged in");
+
+                        int muutuseKoht = fail.getMuudatus();
+                        switch (muutuseKoht) {
+                            case 1:
+                                System.out.printf("%s\tThis Device\n", fail);
+                                System.out.println("Copy the file from this device to Git? (Y/n)");
+                                String answer = scan.nextLine();
+                                if (!Objects.equals(answer, "n") || !Objects.equals(answer, "N")) {
+                                    failisüsteem.uuendaDotFailGit(fail);
+                                    System.out.println("File updated");
+                                } else System.out.println("File not updated");
+                                break;
+                            case 2:
+                                System.out.printf("%s\tGit repo\n", fail);
+                                System.out.println("Copy the file from Git to this device? (Y/n)");
+                                String fileCopyAnswer = scan.nextLine();
+                                if (!Objects.equals(fileCopyAnswer, "n") || !Objects.equals(fileCopyAnswer, "N")) {
+                                    failisüsteem.uuendaDotFailKoahlik(fail);
+                                    System.out.println("File updated");
+                                } else System.out.println("File not updated");
+                                break;
+                            case 3:
+                                System.out.printf("%s\tLocal Device and Git repo\n", fail);
+                                System.out.println("Fixing this is out of our programs scope. You have to fix it DIY :))))");
+                                break;
+                        }
+                    }
+                    failisüsteem.salvestaNimedJaChecksumid();
                     break;
                 case "4":
-                    //remove
+                    System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
+                    String dotFailPathAdd = scan.nextLine();
+                    try {
+                        failisüsteem.lisaDotfail(dotFailPathAdd);
+                        failisüsteem.salvestaNimedJaChecksumid();
+                        System.out.printf("'%s' was added", dotFailPathAdd);
+                    } catch (FileNotFoundException e) {
+                        System.out.printf("'%s' not found", dotFailPathAdd);
+                    }
                     break;
-                default:
+                case "5":
+                    System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
+                    String dotFailPathRemove = scan.nextLine();
+                    try {
+                        failisüsteem.eemaldaDotfail(dotFailPathRemove);
+                        failisüsteem.salvestaNimedJaChecksumid();
+                        System.out.printf("'%s' was removed", dotFailPathRemove);
+                    } catch (FileNotFoundException e) {
+                        System.out.printf("'%s' not found", dotFailPathRemove);
+                    }
+                    break;
+                case "e":
+                case "E":
                     System.out.println("Exiting..");
                     break ui;
+                default:
+                    System.out.printf("Command '%s' not found", action);
             }
         }
+
+
+        // Scan registry and lookup diffs
     }
 }
