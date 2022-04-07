@@ -14,12 +14,15 @@ public class DotFile {
     public String getChecksum() {
         return checksum;
     }
+
     public void uuendaChecksum() throws Exception {
         this.checksum = genereeriChecksum(this.path + this.nimi);
     }
+
     public int getMuudatus() {
         return muudatus;
     }
+
     public String getNimi() {
         return nimi;
     }
@@ -30,14 +33,20 @@ public class DotFile {
         this.checksum = genereeriChecksum(this.path + this.nimi);
     }
 
+    public DotFile(String nimi, String path, String checksum) throws Exception {
+        this.nimi = nimi;
+        this.path = path;
+        this.checksum = checksum;
+    }
+
     private boolean kontrolliMuudatusiKohalik() throws Exception {
         String kontrollChecksum = this.genereeriChecksum(this.path + this.nimi);
-        return Objects.equals(this.checksum, kontrollChecksum);
+        return !Objects.equals(this.checksum, kontrollChecksum);
     }
 
     private boolean kontrolliMuudatusiGit(String gitPath) throws Exception {
         String kontrollChecksum = this.genereeriChecksum(gitPath + this.nimi);
-        return Objects.equals(this.checksum, kontrollChecksum);
+        return !Objects.equals(this.checksum, kontrollChecksum);
     }
 
     public boolean kontrolliMuudatusi(String gitPath) throws Exception {
@@ -111,6 +120,6 @@ public class DotFile {
     }
 
     public String toDataString() {
-        return nimi + ';' + path + ';' + checksum;
+        return nimi + ';' + path + ';' + checksum + "\n";
     }
 }

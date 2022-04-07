@@ -1,6 +1,7 @@
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -12,18 +13,24 @@ public class App {
 
         Scanner scan = new Scanner(System.in);
 
-        if (!Objects.equals(System.getenv("GIT_USER"), null)){
+        if (!Objects.equals(System.getenv("GIT_USER"), null)) {
+            System.out.println(System.getenv("GIT_USER"));
             repo.auth();
-        }
-        else{
+        } else {
             System.out.println("Git username: ");
             String user = scan.nextLine();
             System.out.println("Git password: ");
             String pass = scan.nextLine();
             repo.auth(user, pass);
         }
+    }
 
-
+    private static void uuendaFaile(FileWrangler failisüsteem) throws Exception {
+        List<DotFile> uuendustegaFailid = failisüsteem.leiaUuendused();
+        for (DotFile fail : uuendustegaFailid) {
+            System.out.println(fail);
+            System.out.println(fail.getMuudatus());
+        }
     }
 
     private static void gitPull(GitWrangler repo) throws GitAPIException {
@@ -43,8 +50,10 @@ public class App {
         repo.pullRemote();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Scanner scan = new Scanner(System.in);
+        String gitPath = "./.data/";
+        String databasePath = "./data";
 
         // Banner and version info
         String banner = "     _     _       _       \r\n    | | __| | ___ | |_ ___ \r\n _  | |/ _` |/ _ \\| __/ __|\r\n| |_| | (_| | (_) | |_\\__ \\\r\n \\___/ \\__,_|\\___/ \\__|___/\n";
@@ -54,7 +63,8 @@ public class App {
         System.out.printf("Version: %s\n", version);
 
         System.out.println("Connecting to repo.");
-        GitWrangler repo = new GitWrangler("./.data");
+        GitWrangler repo = new GitWrangler(gitPath);
+        FileWrangler failisüsteem = new FileWrangler(gitPath, databasePath);
 
         ui: while (true){
             System.out.println("Possible actions:\n1. Pull remote\n2. Sync files\n3. Add file to tracking\n4. Remove file from tracking\nE(xit)");
@@ -84,7 +94,6 @@ public class App {
 
 
         // Scan registry and lookup diffs
-
-
+        uuendaFaile(failisüsteem);
     }
 }
