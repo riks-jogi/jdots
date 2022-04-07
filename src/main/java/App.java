@@ -5,8 +5,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Peamine klass kasutajaliidese elementide jaoks.
+ */
 public class App {
-
+    /**
+     * Kasutajaliides Git autentimise jaoks.
+     * Kasutajal on võimalus täpsustada kasutajanimi ja parool keskkonnamuutujatega, et vältida nende trükkimist.
+     * Muutujate puudumisel küsib programm neid interaktiivselt
+     * @param repo Kasutatava repositooriumi GitWrangleri isend
+     */
     private static void gitAuth(GitWrangler repo) {
         // Tegeleb git autentimisega
         // TODO: SSH authentication
@@ -14,7 +22,7 @@ public class App {
         Scanner scan = new Scanner(System.in);
 
         if (!Objects.equals(System.getenv("GIT_USER"), null)) {
-            System.out.println(System.getenv("GIT_USER"));
+            System.out.println("Using ENV credentials for: " + System.getenv("GIT_USER"));
             repo.auth();
         } else {
             System.out.println("Git username: ");
@@ -25,6 +33,12 @@ public class App {
         }
     }
 
+    /**
+     * Kasutajaliides Repositooriumi "remote" pulli jaoks.
+     * Haldab peamiselt autentimise kontrolli ja kasutaja soovil uuesti proovimist.
+     *
+     * @param repo GitWrangleri isend
+     */
     private static void gitPull(GitWrangler repo) throws GitAPIException {
         Scanner scan = new Scanner(System.in);
 
@@ -42,6 +56,19 @@ public class App {
         repo.pullRemote();
     }
 
+    /**
+     * Peamine kasutajaliides, mis küsib pidevalt kasutajalt soovitud tegevuse.
+     * Kutsub välja spetsiifilisemad funktsioonid, kuni kasutaja väljub.
+     *
+     * Tegevused on järgnevad:
+     * 1. Kuva kõik failid, mille seisu jälgitakse.
+     * 2. Tõmba repositooriumist alla muudatused.
+     * 3. Loe failide indeks ja soorita edasisi käske
+     * 4. Lisa fail indeksisse
+     * 5. Eemalda fail indeksist
+     *
+     *
+     */
     public static void main(String[] args) throws Exception {
         Scanner scan = new Scanner(System.in);
         String gitPath = "./.data/";
@@ -108,6 +135,10 @@ public class App {
                         }
                     }
                     failisüsteem.salvestaNimedJaChecksumid();
+                    if (!repo.testAuth()){
+                        gitPull(repo);
+                    }
+                    repo.addCommitPush(System.getenv("HOST"));
                     break;
                 case "4":
                     System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
@@ -139,8 +170,5 @@ public class App {
                     System.out.printf("Command '%s' not found", action);
             }
         }
-
-
-        // Scan registry and lookup diffs
     }
 }

@@ -7,6 +7,12 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
 
+/**
+ * Klass, mille abil liidestub programm Gitiga.
+ * Selle klassi isend iseloomustab ühte repositooriumi ja pakub abifunktsioonie ka autentimiseks.
+ *
+ * Loomisel on vaja anda viit repositooriumi kaustale.
+ */
 public class GitWrangler {
     Repository localRepo;
     Git git;
@@ -19,16 +25,26 @@ public class GitWrangler {
         git = new Git(localRepo);
     }
 
+    /**
+     * Meetod kasutajaandmete Keskkonnamuutujatest lugemiseks.
+     */
     public void auth(){
         this.username = System.getenv("GIT_USER");
         this.secret = System.getenv("GIT_SECRET");
     }
 
+    /**
+     * Meetod, mis sätib kasutajaandmed sisendist.
+     */
     public void auth(String user, String pass){
         this.username = user;
         this.secret = pass;
     }
 
+    /**
+     * Meetod kasutajatunnuste õigsuse kontrolliks.
+     * Meetod kasutab `git remote-ls` käsku, sest see on võrdlemisi kergekaaluline ja ei alusta ühtegi failioperatsiooni.
+     */
     public boolean testAuth(){
         LsRemoteCommand test = git.lsRemote();
         test.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.secret));
@@ -40,6 +56,13 @@ public class GitWrangler {
         }
     }
 
+    /**
+     * Meetod, mis tõmbab alla repositooriumi uuenduse.
+     * Ekvivalentne käsuga `git pull`
+     * Meetod kuvab ka stdouti käsu progressi.
+     *
+     * @return boolean, kas operatsioon õnnestus
+     */
     public boolean pullRemote() throws GitAPIException {
         PullCommand result = git.pull();
         result.setProgressMonitor(new SimpleMonitor());
@@ -48,6 +71,14 @@ public class GitWrangler {
         return success.isSuccessful();
     }
 
+    /**
+     * Meetod failide repositooriumi pushimiseks.
+     * Ekvivalentne käsuga:
+     * `git add * && git commit -m message && git push`
+     *
+     * @param message Commiti sõnum.
+     * @return String Commiti tulemus
+     */
     public String addCommitPush(String message) throws GitAPIException {
         git.add().addFilepattern(".").call();
         git.commit().setMessage(message).call();
@@ -58,4 +89,3 @@ public class GitWrangler {
         return result.getMessages();
     }
 }
-

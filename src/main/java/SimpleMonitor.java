@@ -1,5 +1,9 @@
 import org.eclipse.jgit.lib.ProgressMonitor;
 
+/**
+ * ProgressMonitori alamklass, mis kuvab ekraanile minimalistliku tegevuste jada Git operatsioonide ajal.
+ * Kasutuses GitWrangleri pullRemote ja addCommitPush meetodites.
+ */
 public class SimpleMonitor implements ProgressMonitor {
     @Override
     public void start(int totalTasks) {
