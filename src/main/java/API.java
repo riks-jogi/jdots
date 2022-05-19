@@ -5,6 +5,7 @@ import static spark.Spark.*;
 
 public class API {
     public static void start(GitWrangler git, FileWrangler file){
+        staticFiles.location("/public");
         path("/api", () -> {
             path("/files", () -> {
                 get("", (req, res) -> {
