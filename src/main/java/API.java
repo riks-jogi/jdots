@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.util.List;
-
 import static spark.Spark.*;
 
 public class API {
@@ -9,6 +7,7 @@ public class API {
             path("/files", () -> {
                 get("", (req, res) -> {
                     res.type("application/json");
+                    res.header("Access-Control-Allow-Origin", "*");
                     res.status(200);
                     return file.getDotfailid();
                 }, JsonConvert.json());
