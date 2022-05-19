@@ -1,8 +1,5 @@
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -50,10 +47,10 @@ public class App {
             System.out.println("Authentication failed!");
             System.out.println("Retry? Y/n  ");
             String r = scan.nextLine();
-            if (Objects.equals(r, "n") || Objects.equals(r, "N")) {
-                return;
-            } else {
+            if (Objects.equals(r, "y") || Objects.equals(r, "Y") || Objects.equals(r, "")) {
                 gitAuth(repo);
+            } else {
+                return;
             }
         }
         repo.pullRemote();
@@ -74,7 +71,7 @@ public class App {
                 System.out.println("Copy the file from this device to Git? (Y/n)");
                 String answer = scan.nextLine();
 
-                if (!Objects.equals(answer, "n") || !Objects.equals(answer, "N")) {
+                if (Objects.equals(answer, "y") || Objects.equals(answer, "Y") || Objects.equals(answer, "")) {
                     failisüsteem.uuendaDotFailGit(fail);
                     System.out.println("File updated");
                 } else System.out.println("File not updated");
@@ -84,7 +81,7 @@ public class App {
                 System.out.println("Copy the file from Git to this device? (Y/n)");
                 String fileCopyAnswer = scan.nextLine();
 
-                if (!Objects.equals(fileCopyAnswer, "n") || !Objects.equals(fileCopyAnswer, "N")) {
+                if (Objects.equals(fileCopyAnswer, "y") || Objects.equals(fileCopyAnswer, "Y") || Objects.equals(fileCopyAnswer, "")) {
                     failisüsteem.uuendaDotFailKoahlik(fail);
                     System.out.println("File updated");
                 } else System.out.println("File not updated");
