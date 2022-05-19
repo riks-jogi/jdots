@@ -39,7 +39,7 @@ public class App {
      *
      * @param repo GitWrangleri isend
      */
-    private static void gitPull(GitWrangler repo) throws GitAPIException {
+    private static void gitPull(GitWrangler repo){
         Scanner scan = new Scanner(System.in);
 
         gitAuth(repo);
@@ -53,7 +53,19 @@ public class App {
                 return;
             }
         }
-        repo.pullRemote();
+        try {
+            repo.pullRemote();
+        } catch (GitAPIException e) {
+            System.out.println("Remote pull failed");
+        }
+    }
+
+    public static void gitPush(GitWrangler repo, String message) throws GitAPIException {
+        gitPull(repo);
+
+        if (repo.testAuth()){
+            repo.addCommitPush(message);
+        }
     }
 
     /**
@@ -155,12 +167,7 @@ public class App {
                     }
                     break;
                 case "2":
-                    try {
-                        gitPull(repo);
-                    } catch (GitAPIException e) {
-                        System.out.println(e);
-                        System.out.println("Remote pull failed!");
-                    }
+                    gitPull(repo);
                     break;
                 case "3":
                     List<DotFile> uuendatudFailid = failisüsteem.leiaUuendused();
@@ -169,15 +176,14 @@ public class App {
                     }
 
                     failisüsteem.salvestaNimedJaChecksumid();
-                    if (!repo.testAuth()) gitPull(repo);
-                    repo.addCommitPush("Synced files");
+                    gitPush(repo, "Synced files");
+
                     break;
                 case "4":
                     // Kui sai lisatud, uuenda fileindex sisu ja pushi giti
                     if (addOrRemoveFile(failisüsteem, "add")) {
                         failisüsteem.salvestaNimedJaChecksumid();
-                        if (!repo.testAuth()) gitPull(repo);
-                        repo.addCommitPush("Added file");
+                        gitPush(repo, "Added file");
                     }
                     break;
                 case "5":
