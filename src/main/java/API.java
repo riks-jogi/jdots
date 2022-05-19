@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.util.Scanner;
+
 import static spark.Spark.*;
 
 public class API {
@@ -24,6 +26,10 @@ public class API {
                 });
             });
         });
+    }
+
+    public static void stopserver(){
+        stop();
     }
 
     public static void main(String[] args) throws IOException {

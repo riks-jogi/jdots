@@ -1,8 +1,13 @@
 import org.eclipse.jgit.api.errors.GitAPIException;
+import spark.Spark;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.awt.Desktop;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Peamine klass kasutajaliidese elementide jaoks.
@@ -194,6 +199,21 @@ public class App {
                         failisüsteem.salvestaNimedJaChecksumid();
                     }
                     break;
+                case "6":
+                    System.out.println("Starting server...");
+                    ServerThread server = new ServerThread(repo, failisüsteem);
+                    Thread t = new Thread(server);
+                    t.start();
+                    System.out.println("Server started!");
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(new URI("http://localhost:4567/"));
+                    }
+                    System.out.println("Press return to close the server");
+                    String input = scan.nextLine();
+                    server.terminate();
+                    t.join();
+                    break;
+
                 case "e":
                 case "E":
                     System.out.println("Exiting..");
