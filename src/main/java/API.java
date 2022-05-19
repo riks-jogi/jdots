@@ -9,11 +9,20 @@ public class API {
             path("/files", () -> {
                 get("", (req, res) -> {
                     res.type("application/json");
+                    res.status(200);
                     return file.getDotfailid();
                 }, JsonConvert.json());
 
-                post("", (req, res) -> "Hello Worldpost");
-                delete("", (req, res) -> "Hello Worlddeleet");
+                post("", (req, res) -> {
+                    file.lisaDotfail(req.params("path"));
+                    res.status(200);
+                    return "OK";
+                });
+                delete("", (req, res) -> {
+                    file.eemaldaDotfail(req.params("path"));
+                    res.status(200);
+                    return "OK";
+                });
             });
         });
     }
