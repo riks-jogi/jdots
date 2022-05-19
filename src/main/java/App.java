@@ -162,7 +162,7 @@ public class App {
 
         ui:
         while (true) {
-            System.out.println("\nPossible actions:\n1. List tracked files\n2. Pull remote\n3. Sync files\n4. Add file to tracking\n5. Remove file from tracking\nE(xit)");
+            System.out.println("\nPossible actions:\n1. List tracked files\n2. Pull remote\n3. Sync files\n4. Add file to tracking\n5. Remove file from tracking\n6. Open web GUI\nE(xit)");
             String action = scan.nextLine();
             switch (action) {
                 case "1":
@@ -204,7 +204,7 @@ public class App {
                     ServerThread server = new ServerThread(repo, failisüsteem);
                     Thread t = new Thread(server);
                     t.start();
-                    System.out.println("Server started!");
+                    System.out.println("Server started on localhost:4567!");
                     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                         Desktop.getDesktop().browse(new URI("http://localhost:4567/"));
                     }
