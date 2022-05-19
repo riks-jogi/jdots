@@ -16,7 +16,9 @@ public class FileWrangler {
 
     public void lisaDotfail(String pathJaNimi) throws Exception {
         File dotfailiInfo = new File(pathJaNimi);
-        this.dotfailid.add(new DotFile(dotfailiInfo.getName(), dotfailiInfo.getParent() + "/"));
+        DotFile uusFail = new DotFile(dotfailiInfo.getName(), dotfailiInfo.getParent() + "/");
+        uusFail.uuendaGiti(gitPath);
+        this.dotfailid.add(uusFail);
     }
 
     public void eemaldaDotfail(String pathJaNimi) {
