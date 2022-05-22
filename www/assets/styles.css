@@ -1,0 +1,314 @@
+* {
+  color: #f0f0f0;
+  letter-spacing: 2px;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #333333;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-auto-rows: 1fr;
+  grid-auto-flow: row;
+  justify-items: start;
+  padding-inline: clamp(0.1rem, 7%, 20rem);
+}
+
+@media (min-width: 1000px) {
+  .container {
+    padding-inline: clamp(0.1rem, 15%, 20rem);
+  }
+}
+div.splitbutton a:first-of-type {
+  margin-bottom: 0.2rem;
+}
+div.splitbutton a {
+  display: block;
+}
+span,
+.form-box {
+  display: grid;
+  grid-template-columns: 1fr 0.75fr 3fr 5fr 4fr;
+  grid-template-rows: 1fr;
+  place-items: center start;
+  gap: 0 1rem;
+  width: 100%;
+}
+p,
+a {
+  font-size: 16px;
+  text-align: start;
+}
+p,
+a {
+  cursor: default;
+}
+span:not(.tablehead) a:not(.passive) {
+  cursor: pointer;
+}
+span a {
+  transition: all 150ms;
+}
+a.passive {
+  opacity: 0.6;
+}
+span:not(.tablehead) a:not(.passive):hover,
+span:not(.tablehead) a:not(.passive):focus {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.tablehead p,
+.tablehead a {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+span .filebutton.remove {
+  color: red;
+  margin-top: -6px;
+  font-size: 40px;
+}
+form .filebutton.add {
+  font-size: 30px;
+  margin-left: -3px;
+  margin-top: -4px;
+  color: green;
+  border: none;
+  background: transparent;
+}
+form .filebutton.add:hover,
+form .filebutton.add:focus {
+  color: green;
+  font-weight: 700;
+}
+span a.filebutton.remove:hover,
+span a.filebutton.remove:focus {
+  color: red;
+  font-weight: 700;
+}
+span .filebutton,
+form .filebutton {
+  font-weight: normal;
+  place-self: center;
+  padding: 0.1rem 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.lightsout {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.6);
+}
+
+.modal {
+  z-index: -10;
+  position: absolute;
+  opacity: 0;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 3fr 1fr repeat(2, 1.5fr) 1fr 3fr;
+  grid-template-rows: 2fr 1fr;
+  grid-template-areas:
+    ". text text text text ."
+    ". . button1 button1 . .";
+  transition: 0.2s;
+}
+
+.modal .form-box {
+  display: none;
+}
+
+.modal.confirm,
+.modal.error,
+.modal.login {
+  opacity: 1;
+  z-index: unset;
+}
+
+.modal.error .lightsout {
+  background-color: rgb(92, 43, 43, 0.6);
+}
+
+.modal.confirm {
+  grid-template-areas:
+    ". text text text text ."
+    ". . button1 button2 . .";
+}
+
+.modal.login {
+  grid-template-rows: 3fr 2fr 1fr;
+  gap: 1rem;
+  grid-template-areas:
+    ". text text text text ."
+    "form form form form form form"
+    ". . button1 button1 . .";
+}
+
+.modal.login .lightsout {
+  background-color: rgba(11, 21, 34, 0.8);
+}
+
+.modal.login a.modalbutton {
+  display: none;
+}
+
+.modal.login .form-box {
+  display: grid;
+  grid-area: form;
+  z-index: 2;
+
+  grid: 1fr 1fr / 1fr 1fr;
+  grid-gap: 2rem;
+  width: 80%;
+  place-self: start center;
+  grid-template-areas: "username password" "submit submit";
+  margin-top: 0;
+  grid-auto-columns: 0;
+}
+
+.modal.login .form-box .filebutton.auth {
+  display: block;
+  grid-area: submit;
+  background-color: transparent;
+  border: 2px solid #f0f0f0;
+  border-radius: 1rem;
+  color: #f0f0f0;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  padding: 0.75rem 1.25rem;
+  text-transform: uppercase;
+  transition: all 200ms;
+}
+
+.modal.login .form-box.failed .filebutton.auth {
+  border: 2px solid red;
+  border-radius: 1rem;
+  color: red;
+  display: block;
+}
+
+.modal.login .form-box .filebutton.auth:hover {
+  background-color: #f0f0f0;
+  border: 2px solid #f0f0f0;
+
+  color: #121a25;
+  outline: 0;
+}
+
+.modal.login .form-box.auth img {
+  display: none;
+  grid-area: submit;
+  width: 3.18rem;
+  height: 3.18rem;
+  place-self: center;
+  margin-top: 20px;
+}
+
+.modal.login .form-box.auth.loading img {
+  display: block;
+}
+
+.modal.login .form-box.loading button.filebutton.auth {
+  display: none;
+}
+
+.modal.login .form-box .input-box.auth {
+  align-self: end;
+}
+
+.modal.login .form-box .input-box.auth:first-of-type {
+  justify-self: end;
+}
+
+.modal p {
+  grid-area: text;
+  place-self: end center;
+  text-align: center;
+}
+.modal a.modalbutton {
+  grid-area: button2;
+  place-self: start center;
+  font-weight: 700;
+  padding: 1rem 2rem;
+}
+.modal a.modalbutton:first-of-type {
+  font-weight: 500;
+  grid-area: button1;
+}
+
+.modal a.modalbutton:hover,
+.modal a.modalbutton:active {
+  cursor: pointer;
+}
+
+.modal p,
+.modal a.modalbutton,
+.model .form-box {
+  z-index: 2;
+}
+
+.form-box {
+  margin-top: 3vh;
+  margin-bottom: 0;
+}
+
+.form-box .input-box {
+  position: relative;
+}
+
+.form-box .input-box input {
+  width: 100%;
+  padding: 8px 0;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  outline: none;
+  background: transparent;
+  transition: 0.5s;
+  opacity: 0.6;
+}
+
+.form-box .input-box label {
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 8px 0;
+  font-size: 16px;
+  pointer-events: none;
+  transition: 0.3s;
+  opacity: 0.3;
+}
+
+.form-box .input-box input:focus ~ label,
+.form-box .input-box input:valid ~ label {
+  top: -20px;
+  left: 0;
+  font-size: 12px;
+  opacity: 1;
+}
+
+.form-box .input-box input:focus {
+  opacity: 1;
+}
+
+.form-box .input-box input:valid {
+  border-bottom: 1px solid green;
+  opacity: 1;
+}
+
+.form-box.auth.failed .input-box input {
+  border-bottom: 1px solid red;
+}

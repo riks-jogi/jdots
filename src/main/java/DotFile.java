@@ -61,9 +61,11 @@ public class DotFile {
     // Need kaks funktsiooni loodud, et oleks lihtsalt aru saada kuhu mida kopeeritakse
     public void uuendaKohalikku(String gitPath) throws IOException {
         kirjutaÜle(gitPath + this.nimi, this.path + this.nimi);
+        this.muudatus = 0;
     }
     public void uuendaGiti(String gitPath) throws IOException {
         kirjutaÜle(this.path + this.nimi, gitPath + this.nimi);
+        this.muudatus = 0;
     }
 
     // Kopeerib baithaaval kas gitist pullitud faili arvutisse või vastupidi
@@ -116,20 +118,20 @@ public class DotFile {
     }
 
     public int getMuudatus() {
-        return muudatus;
+        return this.muudatus;
     }
 
     public String getNimi() {
-        return nimi;
+        return this.nimi;
     }
 
     @Override
     public String toString() {
-        return nimi + "\t" + path + nimi;
+        return this.nimi + "\t" + this.path + this.nimi;
     }
 
     // Formaat, milles lõpuks fileindex'isse salvestan
     public String toDataString() {
-        return nimi + ';' + path + ';' + checksum + "\n";
+        return this.nimi + ';' + this.path + ';' + this.checksum + "\n";
     }
 }

@@ -17,7 +17,14 @@ public class FileWrangler {
     public void lisaDotfail(String pathJaNimi) throws Exception {
         File dotfailiInfo = new File(pathJaNimi);
         DotFile uusFail = new DotFile(dotfailiInfo.getName(), dotfailiInfo.getParent() + "/");
-        uusFail.uuendaGiti(gitPath);
+
+        // Kontrollib kas githubis juba selline fail. Kui pole siis lisab
+        // Vajalik, sest dotfile peab olema ka gitis et programm töötaks
+        // Aga alati git kausta kirjutamine kirjutaks üle githubis jälgitud dot faili
+        // iga kord kui uues arvutis seda jälgima hakatase
+        File gitFail = new File(dotfailiInfo.getName() + gitPath);
+        if(!gitFail.exists()) uuendaDotFailGit(uusFail);
+
         this.dotfailid.add(uusFail);
     }
 
@@ -54,7 +61,10 @@ public class FileWrangler {
     public List<DotFile> leiaUuendused() throws Exception {
         List<DotFile> uuendusegaFailid = new ArrayList<>();
         for (DotFile file : this.dotfailid) {
-            if (file.kontrolliMuudatusi(this.gitPath)) uuendusegaFailid.add(file);
+            if (file.kontrolliMuudatusi(this.gitPath)) {
+                System.out.println(file);
+                uuendusegaFailid.add(file);
+            }
         }
 
         return uuendusegaFailid;
@@ -72,8 +82,9 @@ public class FileWrangler {
     }
 
     // Nende funktsioonide mõte on lihtsamalt main'is aru saada, mis fail kus muudetakse
-    public void uuendaDotFailGit(DotFile dotfile) throws IOException {
+    public void uuendaDotFailGit(DotFile dotfile) throws Exception {
         dotfile.uuendaGiti(this.gitPath);
+        dotfile.uuendaChecksum();
     }
     public void uuendaDotFailKoahlik(DotFile dotfile) throws Exception {
         dotfile.uuendaKohalikku(this.gitPath);
@@ -81,6 +92,6 @@ public class FileWrangler {
     }
 
     public List<DotFile> getDotfailid() {
-        return dotfailid;
+        return this.dotfailid;
     }
 }
