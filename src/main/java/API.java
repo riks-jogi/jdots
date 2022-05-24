@@ -67,6 +67,8 @@ public class API {
             });
             path("/auth", () -> {
                 post("", (req, res) -> {
+                    res.type("application/json");
+                    res.header("Access-Control-Allow-Origin", "*");
                     String json = req.body();
                     Map params = gson.fromJson(json, Map.class);
                     git.auth(params.get("user").toString(), params.get("pass").toString());
