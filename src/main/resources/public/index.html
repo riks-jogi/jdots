@@ -1,1 +1,92 @@
-boobs
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Alegreya+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <title>Dotfiles</title>
+  </head>
+  <body>
+    <div class="modal">
+      <p></p>
+      <form class="form-box auth" onsubmit="submitAuth(this); return false">
+        <div class="input-box auth">
+          <input type="text" name="username" required="true" />
+          <label>User name</label>
+        </div>
+        <div class="input-box auth">
+          <input type="password" name="password" required="true" />
+          <label>Password</label>
+        </div>
+        <img src="./assets/loading.svg" />
+        <button
+          type="submit"
+          class="filebutton auth"
+          title="Start tracking this file"
+        >
+          Submit
+        </button>
+      </form>
+
+      <a class="modalbutton" onclick="modalClose()">Close</a>
+      <div class="lightsout"></div>
+    </div>
+    <div class="gui">
+      <div class="container filetable">
+        <span class="tablehead">
+          <p></p>
+          <p>id</p>
+          <p>file name</p>
+          <p>file path</p>
+          <a>Sync Action</a>
+        </span>
+        <!-- <span class="tablefoot">
+          <a class="filebutton add" title="Start tracking this file">+</a>
+          <p>id</p>
+          <p>file name</p>
+          <p>file path</p>
+          <a>Sync Action</a>
+        </span> -->
+        <!-- <form
+          class="generated-form"
+          method="GET"
+          action="submit.php"
+          target="_self"
+        >
+          <input type="submit" value="Submit" />
+          <label for="file">File:</label>
+          <input type="file" id="file" name="file" />
+          <label for="filename">File name:</label>
+          <input type="text" id="filename" name="filename" />
+          <label for="path">Path:</label>
+          <input type="text" id="path" name="path" />
+        </form> -->
+
+        <form class="form-box fileadd" onsubmit="return addDialog(this)">
+          <button
+            type="submit"
+            class="filebutton add"
+            title="Start tracking this file"
+          >
+            +
+          </button>
+          <p></p>
+          <div class="input-box add">
+            <input type="text" name="name" required="true" />
+            <label>File name</label>
+          </div>
+          <div class="input-box add">
+            <input type="text" name="path" required="true" />
+            <label>File Path</label>
+          </div>
+          <a class="passive">Add a new file</a>
+        </form>
+      </div>
+    </div>
+    <script src="./assets/requests.js"></script>
+  </body>
+</html>

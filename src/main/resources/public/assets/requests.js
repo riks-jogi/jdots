@@ -27,7 +27,7 @@ const modalClose = () => {
 
 function request(method, url, data) {
   // const apiURL = "http://10.0.0.159:4567/api";
-  const apiURL = "http://127.0.0.1:4567/api";
+  const apiURL = "http://localhost:4567/api";
   if (method != "GET") {
     return fetch(apiURL + url, {
       method: method,
