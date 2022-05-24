@@ -2,6 +2,8 @@
   color: #f0f0f0;
   letter-spacing: 2px;
   font-family: "Open Sans", sans-serif;
+
+  transition: color 0.2s, background 0.2s, border 0.2s, opacity 0.2s;
 }
 
 body {
@@ -53,15 +55,14 @@ span:not(.tablehead) a:not(.passive) {
   cursor: pointer;
 }
 span a {
-  transition: all 150ms;
+  transition: opacity 150ms, font-weight 150ms, color 150ms;
 }
 a.passive {
-  opacity: 0.6;
+  color: #9c9c9c;
 }
 span:not(.tablehead) a:not(.passive):hover,
 span:not(.tablehead) a:not(.passive):focus {
-  color: #ffffff;
-  font-weight: 600;
+  color: #9c9c9c;
 }
 
 .tablehead p,
@@ -98,7 +99,6 @@ form .filebutton {
   place-self: center;
   padding: 0.1rem 1rem;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 .lightsout {
@@ -106,22 +106,22 @@ form .filebutton {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgb(0, 0, 0, 0.6);
+  background-color: rgb(0, 0, 0, 0.7);
 }
 
 .modal {
   z-index: -10;
-  position: absolute;
+  position: fixed;
   opacity: 0;
   display: grid;
   width: 100%;
   height: 100%;
   grid-template-columns: 3fr 1fr repeat(2, 1.5fr) 1fr 3fr;
-  grid-template-rows: 2fr 1fr;
+  grid-template-rows: 2fr 0fr 2fr;
   grid-template-areas:
     ". text text text text ."
-    ". . button1 button1 . .";
-  transition: 0.2s;
+    ". . button1 button1 . ."
+    ". . loading loading . .";
 }
 
 .modal .form-box {
@@ -135,18 +135,25 @@ form .filebutton {
   z-index: unset;
 }
 
+.modal.confirm ~ .gui form div.input-box,
+.modal.error ~ .gui form div.input-box,
+.modal.login ~ .gui form div.input-box {
+  z-index: -1;
+}
+
 .modal.error .lightsout {
-  background-color: rgb(92, 43, 43, 0.6);
+  background-color: rgb(92, 43, 43, 0.7);
 }
 
 .modal.confirm {
   grid-template-areas:
     ". text text text text ."
-    ". . button1 button2 . .";
+    ". . button1 button2 . ."
+    ". . loading loading . .";
 }
 
 .modal.login {
-  grid-template-rows: 3fr 2fr 1fr;
+  grid-template-rows: 2fr 2fr 1fr;
   gap: 1rem;
   grid-template-areas:
     ". text text text text ."
@@ -158,7 +165,8 @@ form .filebutton {
   background-color: rgba(11, 21, 34, 0.8);
 }
 
-.modal.login a.modalbutton {
+.modal.login a.modalbutton,
+.modal.lightsout img {
   display: none;
 }
 
@@ -189,7 +197,6 @@ form .filebutton {
   margin-top: 20px;
   padding: 0.75rem 1.25rem;
   text-transform: uppercase;
-  transition: all 200ms;
 }
 
 .modal.login .form-box.failed .filebutton.auth {
@@ -237,12 +244,22 @@ form .filebutton {
   place-self: end center;
   text-align: center;
 }
+
 .modal a.modalbutton {
   grid-area: button2;
   place-self: start center;
   font-weight: 700;
   padding: 1rem 2rem;
 }
+
+.modal > img {
+  grid-area: loading;
+  place-self: start center;
+  margin-top: 1rem;
+  width: 3rem;
+  opacity: 0;
+}
+
 .modal a.modalbutton:first-of-type {
   font-weight: 500;
   grid-area: button1;
@@ -251,12 +268,15 @@ form .filebutton {
 .modal a.modalbutton:hover,
 .modal a.modalbutton:active {
   cursor: pointer;
+  opacity: 0.7;
 }
 
 .modal p,
 .modal a.modalbutton,
-.model .form-box {
+.modal .form-box,
+.modal img {
   z-index: 2;
+  user-select: none;
 }
 
 .form-box {
@@ -276,7 +296,7 @@ form .filebutton {
   border-bottom: 1px solid #f0f0f0;
   outline: none;
   background: transparent;
-  transition: 0.5s;
+  transition: color 0.5s, background 0.5s, border 0.5s, opacity 0.5s;
   opacity: 0.6;
 }
 
@@ -288,7 +308,7 @@ form .filebutton {
   padding: 8px 0;
   font-size: 16px;
   pointer-events: none;
-  transition: 0.3s;
+  transition: opacity 0.5s, top 0.5s, font-size 0.5s;
   opacity: 0.3;
 }
 
@@ -311,4 +331,18 @@ form .filebutton {
 
 .form-box.auth.failed .input-box input {
   border-bottom: 1px solid red;
+}
+
+.modal.loading a {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.modal.loading a:hover {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.modal.loading > img {
+  opacity: 1;
 }

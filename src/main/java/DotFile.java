@@ -111,6 +111,14 @@ public class DotFile {
         return sb.toString();
     }
 
+    // Kasutatakse faili trackimisse lisades.
+    // parameeter checksum on mingi suvaline väärtus
+    // Nii saab kasutaja otsustada, kas õige versioon on gitis või selles arvutis kust lisati
+    // sest ei lokaalse ega giti faili checksum klapi nn "õige versiooni" checksumiga
+    // sest "õige versiooni" checksum määratakse siin suvaliselt
+    public void uuendaChecksum(String checksum) {
+        this.checksum = checksum;
+    }
     // Kasutatakse, kui arvutis olev fail kirjutatakse üle gitist tulevaga. Vajalik, et järgmine kord
     // fileindex sisse lugedes oleks seal õige sum, mitte eelmise arvutis oleva versiooni sum
     public void uuendaChecksum() throws Exception {

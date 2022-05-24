@@ -7,42 +7,57 @@ import java.util.Objects;
 import static spark.Spark.*;
 
 public class API {
-    public static void start(GitWrangler git, FileWrangler file){
+    public static void start(GitWrangler git, FileWrangler file) {
         staticFiles.location("/public");
         Gson gson = new Gson();
         path("/api", () -> {
             path("/files", () -> {
                 get("", (req, res) -> {
-                    res.type("application/json");
-                    res.header("Access-Control-Allow-Origin", "*");
-                    file.leiaUuendused();
+                    try {
+                        res.type("application/json");
+                        res.header("Access-Control-Allow-Origin", "*");
+                        file.leiaUuendused();
 
-                    res.status(200);
-                    return file.getDotfailid();
+                        res.status(200);
+                        return file.getDotfailid();
+                    } catch (Exception e) {
+                        res.status(400);
+                        return e.toString();
+                    }
                 }, JsonConvert.json());
 
                 post("", (req, res) -> {
-                    String json = req.body();
-                    Map params = gson.fromJson(json, Map.class);
-                    file.lisaDotfail(String.valueOf(params.get("path")));
-                    file.salvestaNimedJaChecksumid();
-                    git.addCommitPush("Added "+ params.get("path"));
+                    try {
+                        String json = req.body();
+                        Map params = gson.fromJson(json, Map.class);
+                        file.lisaDotfail(String.valueOf(params.get("path")));
+                        file.salvestaNimedJaChecksumid();
+                        git.addCommitPush("Added " + params.get("path"));
 
-                    res.status(200);
-                    return "OK";
+                        res.status(200);
+                        return "OK";
+                    } catch (Exception e) {
+                        res.status(400);
+                        return e.toString();
+                    }
                 }, JsonConvert.json());
                 delete("", (req, res) -> {
-                    String json = req.body();
-                    Map params = gson.fromJson(json, Map.class);
-                    file.eemaldaDotfail(String.valueOf(params.get("path")));
-                    file.salvestaNimedJaChecksumid();
+                    try {
+                        String json = req.body();
+                        Map params = gson.fromJson(json, Map.class);
+                        file.eemaldaDotfail(String.valueOf(params.get("path")));
+                        file.salvestaNimedJaChecksumid();
 
-                    res.status(200);
-                    return "OK";
+                        res.status(200);
+                        return "OK";
+                    } catch (Exception e) {
+                        res.status(400);
+                        return e.toString();
+                    }
                 }, JsonConvert.json());
             });
-            path("/sync", () -> {
-                post("", (req, res) -> {
+            path("/sync", () -> post("", (req, res) -> {
+                try {
                     String json = req.body();
                     Map params = gson.fromJson(json, Map.class);
                     DotFile fileToSync = file.getDotfailid().get(Integer.parseInt((String) params.get("id")));
@@ -50,7 +65,7 @@ public class API {
                     if (Objects.equals(params.get("loc"), "git")) {
                         file.uuendaDotFailGit(fileToSync);
                         file.salvestaNimedJaChecksumid();
-                        git.addCommitPush("Synced "+ fileToSync.getNimi());
+                        git.addCommitPush("Synced " + fileToSync.getNimi());
 
                         res.status(200);
                         return "OK";
@@ -61,33 +76,47 @@ public class API {
                         res.status(200);
                         return "OK";
                     }
+                } catch (Exception e) {
                     res.status(400);
-                    return "Bad request";
-                }, JsonConvert.json());
-            });
+                    return e.toString();
+                }
+
+                res.status(400);
+                return "Bad request";
+            }, JsonConvert.json()));
             path("/auth", () -> {
                 post("", (req, res) -> {
-                    res.type("application/json");
-                    res.header("Access-Control-Allow-Origin", "*");
-                    String json = req.body();
-                    Map params = gson.fromJson(json, Map.class);
-                    git.auth(params.get("user").toString(), params.get("pass").toString());
+                    try {
+                        res.type("application/json");
+                        res.header("Access-Control-Allow-Origin", "*");
+                        String json = req.body();
+                        Map params = gson.fromJson(json, Map.class);
+                        git.auth(params.get("user").toString(), params.get("pass").toString());
 
-                    return git.testAuth();
+                        return git.testAuth();
+                    } catch (Exception e) {
+                        res.status(400);
+                        return e.toString();
+                    }
                 }, JsonConvert.json());
 
                 get("", (req, res) -> {
-                    res.type("application/json");
-                    res.header("Access-Control-Allow-Origin", "*");
+                    try {
+                        res.type("application/json");
+                        res.header("Access-Control-Allow-Origin", "*");
 
-                    res.status(200);
-                    return git.testAuth();
+                        res.status(200);
+                        return git.testAuth();
+                    } catch (Exception e) {
+                        res.status(400);
+                        return e.toString();
+                    }
                 }, JsonConvert.json());
             });
         });
     }
 
-    public static void stopserver(){
+    public static void stopserver() {
         stop();
     }
 

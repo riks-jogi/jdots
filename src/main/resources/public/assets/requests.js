@@ -7,10 +7,16 @@ const modalOpen = (text, type, button, buttonURL) => {
   if (button && buttonURL) {
     const buttonElement = document.createElement("a");
     buttonElement.classList = "modalbutton aux";
-    buttonElement.setAttribute("onclick", buttonURL + ";return false");
+    buttonElement.setAttribute(
+      "onclick",
+      "setModalButton('loading'," + type + ");" + buttonURL + ";return false"
+    );
     buttonElement.text = button;
 
-    modal.insertBefore(buttonElement, modal.lastElementChild);
+    modal.insertBefore(
+      buttonElement,
+      modal.lastElementChild.previousElementSibling
+    );
   }
 };
 
@@ -26,7 +32,6 @@ const modalClose = () => {
 };
 
 function request(method, url, data) {
-  // const apiURL = "http://10.0.0.159:4567/api";
   const apiURL = "http://localhost:4567/api";
   if (method != "GET") {
     return fetch(apiURL + url, {
@@ -81,12 +86,16 @@ const parseUpdateState = (updateState, id) => {
 
 const getAuth = () => {
   return request("GET", "/auth", "").then((a) => {
-    return a;
+    if ((a == true) | (a == false)) {
+      return a;
+    }
+    modalOpen(a, "error");
+    return false;
   });
 };
 
 const submitAuth = (element) => {
-  setAuthDialogButton("loading");
+  setModalButton("loading", "auth");
   const data = {
     user: element.elements["username"].value,
     pass: element.elements["password"].value,
@@ -95,9 +104,10 @@ const submitAuth = (element) => {
   request("POST", "/auth", data).then((response) => {
     if (response == true) {
       modalClose();
-      history.go(0);
+      clearFiles();
+      getFiles();
     } else {
-      setAuthDialogButton("failed");
+      setModalButton("failed", "auth");
     }
   });
 };
@@ -113,17 +123,24 @@ const authDialog = () => {
   });
 };
 
-const setAuthDialogButton = (option) => {
-  const form = document.getElementsByClassName("form-box auth")[0];
-  const button = document.getElementsByClassName("filebutton auth")[0];
-  form.classList = "form-box auth";
+const setModalButton = (option, type) => {
+  const wrapper = document.getElementsByClassName(
+    type == "auth" ? "form-box auth" : "modal"
+  )[0];
+
+  const button = document.getElementsByClassName(
+    type == "auth" ? "filebutton auth" : "modalbutton aux"
+  )[0];
+
+  wrapper.classList.remove("loading");
+  wrapper.classList.remove("failed");
 
   switch (option) {
     case "loading":
-      form.classList.toggle("loading");
+      wrapper.classList.add("loading");
       break;
     case "failed":
-      form.classList.toggle("failed");
+      wrapper.classList.add("failed");
       button.textContent = "Try again";
       break;
   }
@@ -137,26 +154,50 @@ const getFiles = () => {
   });
 };
 
+const clearFiles = () => {
+  const fileTable = document.getElementsByClassName("filetable")[0];
+  while (fileTable.childElementCount > 2) {
+    fileTable.removeChild(fileTable.firstElementChild.nextElementSibling);
+  }
+
+  fileTable.lastElementChild.firstElementChild.nextElementSibling.innerText = 0;
+};
+
 const syncFiles = (id, locationID) => {
   const location = locationID == 1 ? "git" : "local";
   const data = { id: String(id), loc: location };
 
+  document.body.style.cursor = "wait";
   request("POST", "/sync", data).then((a) => {
-    console.log(a);
+    if (a != "OK") {
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      document.body.style.cursor = "auto";
+    }
   });
 };
 
 const removeFile = (id) => {
   const row = document.getElementById(id);
-  const pathAndName = row.childNodes[3].innerHTML + row.childNodes[2].innerHTML;
+  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
   const data = { path: pathAndName };
 
-  request("DELETE", "/files", data);
+  request("DELETE", "/files", data).then((a) => {
+    if (a != "OK") {
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      modalClose();
+    }
+  });
 };
 
 const removeDialog = (id) => {
   const row = document.getElementById(id);
-  const pathAndName = row.childNodes[3].innerHTML + row.childNodes[2].innerHTML;
+  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
 
   modalOpen(
     "You're about to stop tracking <b>" + pathAndName + "</b> on this device.",
@@ -179,7 +220,6 @@ const addDialog = (element) => {
     "Continue",
     "addFromInput()"
   );
-  return false;
 };
 
 const addFromInput = () => {
@@ -188,27 +228,34 @@ const addFromInput = () => {
   const data = { path: pathAndName };
 
   request("POST", "/files", data).then((a) => {
-    console.log(a);
+    if (a != "OK") {
+      modalClose();
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      form.elements["path"].value = "";
+      form.elements["name"].value = "";
+      modalClose();
+    }
   });
-  form.elements["path"].value = "";
-  form.elements["name"].value = "";
 };
 
 const addFile = (name, path, updateState) => {
   const table = document.getElementsByClassName("filetable")[0];
-  const lastId = table.lastElementChild.previousElementSibling.id;
+  const form = document.getElementsByClassName("form-box fileadd")[0];
+  const nextId = form.firstElementChild.nextElementSibling.innerText;
 
-  const id = lastId == "" ? 0 : Number(lastId) + 1;
-  const action = parseUpdateState(updateState, id);
+  const action = parseUpdateState(updateState, nextId);
   const newRow = document.createElement("span");
+  newRow.id = nextId;
 
-  newRow.id = id;
   newRow.innerHTML =
     "<a class='filebutton remove' onclick='removeDialog(" +
-    id +
+    nextId +
     ")' title='Stop tracking this file'>-</a>" +
     '<p class="id">' +
-    id +
+    nextId +
     '</p><p class="name">' +
     name +
     '</p><p class="path">' +
@@ -216,8 +263,13 @@ const addFile = (name, path, updateState) => {
     action;
 
   table.lastElementChild.before(newRow);
-  table.lastElementChild.firstElementChild.nextElementSibling.innerHTML =
-    id + 1;
+  form.firstElementChild.nextElementSibling.innerText = Number(nextId) + 1;
+};
+
+document.onkeydown = function (e) {
+  if (e.key === "Escape") {
+    modalClose();
+  }
 };
 
 authDialog();

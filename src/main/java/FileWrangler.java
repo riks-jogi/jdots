@@ -15,6 +15,14 @@ public class FileWrangler {
     private final String databasePath;
 
     public void lisaDotfail(String pathJaNimi) throws Exception {
+        // Kontrollib kas juba jälgitakse sama pathi ja nimega faili
+        for (DotFile fail: this.dotfailid) {
+            String[] filedata = fail.toDataString().split(";");
+            if (Objects.equals(filedata[1]+filedata[0], pathJaNimi)) {
+                throw new Exception("The file is already being tracked.");
+            }
+        }
+
         File dotfailiInfo = new File(pathJaNimi);
         DotFile uusFail = new DotFile(dotfailiInfo.getName(), dotfailiInfo.getParent() + "/");
 
@@ -22,9 +30,11 @@ public class FileWrangler {
         // Vajalik, sest dotfile peab olema ka gitis et programm töötaks
         // Aga alati git kausta kirjutamine kirjutaks üle githubis jälgitud dot faili
         // iga kord kui uues arvutis seda jälgima hakatase
-        File gitFail = new File(dotfailiInfo.getName() + gitPath);
+        File gitFail = new File(gitPath + dotfailiInfo.getName());
+
         if(!gitFail.exists()) uuendaDotFailGit(uusFail);
 
+        uusFail.uuendaChecksum("000000000");
         this.dotfailid.add(uusFail);
     }
 
@@ -62,7 +72,6 @@ public class FileWrangler {
         List<DotFile> uuendusegaFailid = new ArrayList<>();
         for (DotFile file : this.dotfailid) {
             if (file.kontrolliMuudatusi(this.gitPath)) {
-                System.out.println(file);
                 uuendusegaFailid.add(file);
             }
         }

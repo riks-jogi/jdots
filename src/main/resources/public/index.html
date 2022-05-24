@@ -33,6 +33,7 @@
       </form>
 
       <a class="modalbutton" onclick="modalClose()">Close</a>
+      <img src="./assets/loading.svg" />
       <div class="lightsout"></div>
     </div>
     <div class="gui">
@@ -44,29 +45,7 @@
           <p>file path</p>
           <a>Sync Action</a>
         </span>
-        <!-- <span class="tablefoot">
-          <a class="filebutton add" title="Start tracking this file">+</a>
-          <p>id</p>
-          <p>file name</p>
-          <p>file path</p>
-          <a>Sync Action</a>
-        </span> -->
-        <!-- <form
-          class="generated-form"
-          method="GET"
-          action="submit.php"
-          target="_self"
-        >
-          <input type="submit" value="Submit" />
-          <label for="file">File:</label>
-          <input type="file" id="file" name="file" />
-          <label for="filename">File name:</label>
-          <input type="text" id="filename" name="filename" />
-          <label for="path">Path:</label>
-          <input type="text" id="path" name="path" />
-        </form> -->
-
-        <form class="form-box fileadd" onsubmit="return addDialog(this)">
+        <form class="form-box fileadd" onsubmit="addDialog(this); return false">
           <button
             type="submit"
             class="filebutton add"
@@ -74,7 +53,7 @@
           >
             +
           </button>
-          <p></p>
+          <p>0</p>
           <div class="input-box add">
             <input type="text" name="name" required="true" />
             <label>File name</label>
