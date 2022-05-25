@@ -9,7 +9,6 @@ import java.io.IOException;
 /**
  * Klass, mille abil liidestub programm Gitiga.
  * Selle klassi isend iseloomustab ühte repositooriumi ja pakub abifunktsioonie ka autentimiseks.
- *
  * Loomisel on vaja anda viit repositooriumi kaustale.
  */
 public class GitWrangler {
@@ -27,7 +26,7 @@ public class GitWrangler {
     /**
      * Meetod kasutajaandmete Keskkonnamuutujatest lugemiseks.
      */
-    public void auth(){
+    public void auth() {
         this.username = System.getenv("GIT_USER");
         this.secret = System.getenv("GIT_SECRET");
     }
@@ -35,7 +34,7 @@ public class GitWrangler {
     /**
      * Meetod, mis sätib kasutajaandmed sisendist.
      */
-    public void auth(String user, String pass){
+    public void auth(String user, String pass) {
         this.username = user;
         this.secret = pass;
     }
@@ -44,13 +43,14 @@ public class GitWrangler {
      * Meetod kasutajatunnuste õigsuse kontrolliks.
      * Meetod kasutab `git remote-ls` käsku, sest see on võrdlemisi kergekaaluline ja ei alusta ühtegi failioperatsiooni.
      */
-    public boolean testAuth(){
+    public boolean testAuth() {
         LsRemoteCommand test = git.lsRemote();
         try {
             test.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.secret));
             test.call();
             return true;
-        } catch (NullPointerException | GitAPIException e) { // Kui username ja secret pole defineeritud või kui git ise katki
+        } catch (NullPointerException |
+                 GitAPIException e) { // Kui username ja secret pole defineeritud või kui git ise katki
             return false;
         }
     }

@@ -4,7 +4,6 @@ import java.util.*;
 /**
  * Klass, mis loob, talletab ja lõpuks salvestab jälgitud dot failid fileindex'isse
  * fileindexis on talletatud faili nimi, path süsteemis ja sisu MD5 checksum
- *
  * Fileindex'is on iga rida DotFile klassi loomiseks vajalik info. FileWrangler alguses loetakse
  * fileindex'ist kõik read DotFile'ideks ja lisatakse dotfailid listi.
  * Kõik failid, mis on dotfailid listis salvestatakse lõpuks fileindex faili.
@@ -16,9 +15,9 @@ public class FileWrangler {
 
     public void lisaDotfail(String pathJaNimi) throws Exception {
         // Kontrollib kas juba jälgitakse sama pathi ja nimega faili
-        for (DotFile fail: this.dotfailid) {
+        for (DotFile fail : this.dotfailid) {
             String[] filedata = fail.toDataString().split(";");
-            if (Objects.equals(filedata[1]+filedata[0], pathJaNimi)) {
+            if (Objects.equals(filedata[1] + filedata[0], pathJaNimi)) {
                 throw new Exception("The file is already being tracked.");
             }
         }
@@ -32,7 +31,7 @@ public class FileWrangler {
         // iga kord kui uues arvutis seda jälgima hakatase
         File gitFail = new File(gitPath + dotfailiInfo.getName());
 
-        if(!gitFail.exists()) uuendaDotFailGit(uusFail);
+        if (!gitFail.exists()) uuendaDotFailGit(uusFail);
 
         uusFail.uuendaChecksum("000000000");
         this.dotfailid.add(uusFail);
@@ -95,6 +94,7 @@ public class FileWrangler {
         dotfile.uuendaGiti(this.gitPath);
         dotfile.uuendaChecksum();
     }
+
     public void uuendaDotFailKoahlik(DotFile dotfile) throws Exception {
         dotfile.uuendaKohalikku(this.gitPath);
         dotfile.uuendaChecksum();

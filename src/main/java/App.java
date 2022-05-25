@@ -41,7 +41,7 @@ public class App {
      *
      * @param repo GitWrangleri isend
      */
-    private static void gitPull(GitWrangler repo){
+    private static void gitPull(GitWrangler repo) {
         try (Scanner scan = new Scanner(System.in)) {
             gitAuth(repo);
             while (!repo.testAuth()) {
@@ -57,16 +57,18 @@ public class App {
         }
 
         try {
-            repo.pullRemote();
+            if (!repo.pullRemote()) {
+                System.out.println("Remote pull failed");
+            }
         } catch (GitAPIException e) {
-            System.out.println("Remote pull failed");
+            System.out.println("Remote pull failed, "+ e);
         }
     }
 
     public static void gitPush(GitWrangler repo, String message) throws GitAPIException {
         gitPull(repo);
 
-        if (repo.testAuth()){
+        if (repo.testAuth()) {
             repo.addCommitPush(message);
         }
     }
@@ -74,6 +76,7 @@ public class App {
     /**
      * Kasutades DotFile klassi meetodeid, uurib kas vaadetava faili checksum on erinev kui teadaolev
      * Olenevalt kus fail erinev on (muutusekoht) pakub kasutajale vastavaid variante failide ümber kopeerimiseks
+     *
      * @param failisüsteem main funktsioonis defineeritud FileWrangler isend
      */
     private static void fileSyncDialog(FileWrangler failisüsteem, Scanner scan, DotFile fail) throws Exception {
@@ -135,8 +138,9 @@ public class App {
     /**
      * Lisab või eemaldab mingi faili jälgimise
      * Repost ja arvutist faili ei kustuta, kustutab FileWranger.dotfiles Listist ja seega fileindexist
+     *
      * @param failisüsteem main funktsioonis defineeritud FileWrangler isend
-     * @param task "add" või "remove", olenevalt mida kasutaja valis
+     * @param task         "add" või "remove", olenevalt mida kasutaja valis
      */
     private static boolean addOrRemoveFile(FileWrangler failisüsteem, String task) {
         try (Scanner scan = new Scanner(System.in)) {
@@ -158,7 +162,6 @@ public class App {
     /**
      * Peamine kasutajaliides, mis küsib pidevalt kasutajalt soovitud tegevuse.
      * Kutsub välja spetsiifilisemad funktsioonid, kuni kasutaja väljub.
-     *
      * Tegevused on järgnevad:
      * 1. Kuva kõik failid, mille seisu jälgitakse.
      * 2. Tõmba repositooriumist alla muudatused.
@@ -198,7 +201,7 @@ public class App {
                     break;
                 case "3":
                     List<DotFile> uuendatudFailid = failisüsteem.leiaUuendused();
-                    for (DotFile fail: uuendatudFailid) {
+                    for (DotFile fail : uuendatudFailid) {
                         fileSyncDialog(failisüsteem, scan, fail);
                     }
 

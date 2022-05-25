@@ -5,11 +5,9 @@ import java.util.Objects;
 /**
  * DotFile signaleerib ühte jälgitavat .file-i ehk dot file-i
  * Talletab nime ja viidet kus fail arvutis on ja kus fail gitiga jälgitavas repos os
- *
  * Nimi on failinimi ilma pathita ja path ei sisalda lõpus failinime
  * (nt ssh configi puhul nimi="config" path="/home/user/.ssh/")
  * muudatus võib omada 3me väärtust 1- muutus arvutis; 2- mutuus repos; 3- muutus mõlemas
- *
  * Kuna diff tööriista sisse ehitamine polnud selle projekti jaoks mõistlik, on 3ndal juhul
  * võimalik ainult üks või teine fail täielikult üle kirjutada.
  */
@@ -63,6 +61,7 @@ public class DotFile {
         kirjutaÜle(gitPath + this.nimi, this.path + this.nimi);
         this.muudatus = 0;
     }
+
     public void uuendaGiti(String gitPath) throws IOException {
         kirjutaÜle(this.path + this.nimi, gitPath + this.nimi);
         this.muudatus = 0;
@@ -119,6 +118,7 @@ public class DotFile {
     public void uuendaChecksum(String checksum) {
         this.checksum = checksum;
     }
+
     // Kasutatakse, kui arvutis olev fail kirjutatakse üle gitist tulevaga. Vajalik, et järgmine kord
     // fileindex sisse lugedes oleks seal õige sum, mitte eelmise arvutis oleva versiooni sum
     public void uuendaChecksum() throws Exception {
