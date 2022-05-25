@@ -1,13 +1,10 @@
 import org.eclipse.jgit.api.errors.GitAPIException;
-import spark.Spark;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.awt.Desktop;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Peamine klass kasutajaliidese elementide jaoks.
@@ -24,17 +21,17 @@ public class App {
         // Tegeleb git autentimisega
         // TODO: SSH authentication
 
-        Scanner scan = new Scanner(System.in);
-
-        if (!Objects.equals(System.getenv("GIT_USER"), null)) {
-            System.out.println("Using ENV credentials for: " + System.getenv("GIT_USER"));
-            repo.auth();
-        } else {
-            System.out.println("Git username: ");
-            String user = scan.nextLine();
-            System.out.println("Git password: ");
-            String pass = scan.nextLine();
-            repo.auth(user, pass);
+        try (Scanner scan = new Scanner(System.in)) {
+            if (!Objects.equals(System.getenv("GIT_USER"), null)) {
+                System.out.println("Using ENV credentials for: " + System.getenv("GIT_USER"));
+                repo.auth();
+            } else {
+                System.out.println("Git username: ");
+                String user = scan.nextLine();
+                System.out.println("Git password: ");
+                String pass = scan.nextLine();
+                repo.auth(user, pass);
+            }
         }
     }
 
@@ -45,19 +42,20 @@ public class App {
      * @param repo GitWrangleri isend
      */
     private static void gitPull(GitWrangler repo){
-        Scanner scan = new Scanner(System.in);
-
-        gitAuth(repo);
-        while (!repo.testAuth()) {
-            System.out.println("Authentication failed!");
-            System.out.println("Retry? Y/n  ");
-            String r = scan.nextLine();
-            if (Objects.equals(r, "y") || Objects.equals(r, "Y") || Objects.equals(r, "")) {
-                gitAuth(repo);
-            } else {
-                return;
+        try (Scanner scan = new Scanner(System.in)) {
+            gitAuth(repo);
+            while (!repo.testAuth()) {
+                System.out.println("Authentication failed!");
+                System.out.println("Retry? Y/n  ");
+                String r = scan.nextLine();
+                if (Objects.equals(r, "y") || Objects.equals(r, "Y") || Objects.equals(r, "")) {
+                    gitAuth(repo);
+                } else {
+                    return;
+                }
             }
         }
+
         try {
             repo.pullRemote();
         } catch (GitAPIException e) {
@@ -105,7 +103,31 @@ public class App {
                 break;
             case 3:
                 System.out.printf("%s\tLocal Device and Git repo\n", fail);
-                System.out.println("Fixing this is out of our programs scope. You have to fix it DIY :))))");
+                System.out.println("Do you want to:\n" +
+                        "[1] Copy the file from Git to this device OR\n" +
+                        "[2] Copy the file from this device to Git");
+
+                String choice = "";
+                while (Objects.equals(choice, "")) {
+                    String conflictLocation = scan.nextLine();
+                    if (Objects.equals(conflictLocation, "1")) {
+                        choice = "Git to this device";
+                    } else if (Objects.equals(conflictLocation, "2")) {
+                        choice = "this device to Git";
+                    } else System.out.println("Please type either 1 or 2.");
+                }
+
+                System.out.println("Are you sure you want to copy the file from " + choice + " (Y/n)");
+                String conflictConfirm = scan.nextLine();
+
+                if (Objects.equals(conflictConfirm, "y") || Objects.equals(conflictConfirm, "Y") || Objects.equals(conflictConfirm, "")) {
+                    if (choice.equals("Git to this device")) {
+                        failisüsteem.uuendaDotFailGit(fail);
+                    } else {
+                        failisüsteem.uuendaDotFailKoahlik(fail);
+                    }
+                    System.out.println("File updated");
+                } else System.out.println("File not updated");
                 break;
         }
     }
@@ -117,19 +139,19 @@ public class App {
      * @param task "add" või "remove", olenevalt mida kasutaja valis
      */
     private static boolean addOrRemoveFile(FileWrangler failisüsteem, String task) {
-        Scanner scan = new Scanner(System.in);
+        try (Scanner scan = new Scanner(System.in)) {
+            System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
+            String dotFailPath = scan.nextLine();
+            try {
+                if (Objects.equals(task, "add")) failisüsteem.lisaDotfail(dotFailPath);
+                else if (Objects.equals(task, "remove")) failisüsteem.eemaldaDotfail(dotFailPath);
 
-        System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
-        String dotFailPath = scan.nextLine();
-        try {
-            if (Objects.equals(task, "add")) failisüsteem.lisaDotfail(dotFailPath);
-            else if (Objects.equals(task, "remove")) failisüsteem.eemaldaDotfail(dotFailPath);
-
-            System.out.printf("'%s' was %s\n", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
-            return true;
-        } catch (Exception e) {
-            System.out.printf("'%s' not found\n", dotFailPath);
-            return false;
+                System.out.printf("'%s' was %s\n", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
+                return true;
+            } catch (Exception e) {
+                System.out.printf("'%s' not found\n", dotFailPath);
+                return false;
+            }
         }
     }
 
@@ -209,7 +231,7 @@ public class App {
                         Desktop.getDesktop().browse(new URI("http://localhost:4567/"));
                     }
                     System.out.println("Press return to close the server");
-                    String input = scan.nextLine();
+                    scan.nextLine();
                     server.terminate();
                     t.join();
                     break;

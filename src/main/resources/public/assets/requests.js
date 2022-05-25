@@ -26,110 +26,29 @@ const modalClose = () => {
   modal.firstElementChild.innerHTML = "";
   modal.classList = "modal";
 
-  if (document.getElementsByClassName("modalbutton aux").length != 0) {
+  if (document.getElementsByClassName("modalbutton aux").length !== 0) {
     document.getElementsByClassName("modalbutton aux")[0].remove();
   }
 };
 
-function request(method, url, data) {
-  const apiURL = "http://localhost:4567/api";
-  if (method != "GET") {
-    return fetch(apiURL + url, {
-      method: method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((response) => response.json());
-  } else {
-    return fetch(apiURL + url, {
-      method: method,
-    })
-      .then((response) => response.json())
-      .catch((error) => modalOpen(error, "error"));
-  }
-}
-
-const parseUpdateState = (updateState, id) => {
-  switch (updateState) {
-    case 0:
-      return '</p><a class="passive">' + "File is in sync" + "</a>";
-    case 1:
-      return (
-        "</p><a onclick='syncFiles(" +
-        id +
-        ", 1)'>" +
-        "Arvuti -> Github" +
-        "</a>"
-      );
-    case 2:
-      return (
-        "</p><a onclick='syncFiles(" +
-        id +
-        ", 2)'>" +
-        "Github -> Arvuti" +
-        "</a>"
-      );
-    case 3:
-      return (
-        "</p><div class='splitbutton'><a onclick='syncFiles(" +
-        id +
-        ", 1)'>" +
-        "Arvuti -> Github" +
-        "</a>" +
-        "<a onclick='syncFiles(" +
-        id +
-        ", 2)'>" +
-        "Github -> Arvuti" +
-        "</a></div>"
-      );
-  }
-};
-
-const getAuth = () => {
-  return request("GET", "/auth", "").then((a) => {
-    if ((a == true) | (a == false)) {
-      return a;
-    }
-    modalOpen(a, "error");
-    return false;
-  });
-};
-
-const submitAuth = (element) => {
-  setModalButton("loading", "auth");
-  const data = {
-    user: element.elements["username"].value,
-    pass: element.elements["password"].value,
-  };
-
-  request("POST", "/auth", data).then((response) => {
-    if (response == true) {
+const closeModalOnButtonPress = (ev) => {
+  const modal = document.getElementsByClassName("modal")[0];
+  if (ev.key === "Escape") {
+    if (
+      !modal.classList.contains("loading") &&
+      !modal.classList.contains("login")
+    )
       modalClose();
-      clearFiles();
-      getFiles();
-    } else {
-      setModalButton("failed", "auth");
-    }
-  });
-};
-
-const authDialog = () => {
-  getAuth().then((response) => {
-    if (!response) {
-      modalOpen(
-        "<b>Please provide your GitHub credentials.</b> <br/> <br/> Access tokens are preferred <a>https://github.com/settings/tokens</a>",
-        "login"
-      );
-    }
-  });
+  }
 };
 
 const setModalButton = (option, type) => {
   const wrapper = document.getElementsByClassName(
-    type == "auth" ? "form-box auth" : "modal"
+    type === "auth" ? "form-box auth" : "modal"
   )[0];
 
   const button = document.getElementsByClassName(
-    type == "auth" ? "filebutton auth" : "modalbutton aux"
+    type === "auth" ? "filebutton auth" : "modalbutton aux"
   )[0];
 
   wrapper.classList.remove("loading");
@@ -146,99 +65,58 @@ const setModalButton = (option, type) => {
   }
 };
 
-const getFiles = () => {
-  request("GET", "/files", "").then((a) => {
-    a.map((b) => {
-      addFile(b["nimi"], b["path"], b["muudatus"]);
-    });
-  });
-};
-
-const clearFiles = () => {
-  const fileTable = document.getElementsByClassName("filetable")[0];
-  while (fileTable.childElementCount > 2) {
-    fileTable.removeChild(fileTable.firstElementChild.nextElementSibling);
+const request = (method, url, data) => {
+  const apiURL = "http://localhost:4567/api";
+  if (method === "GET") {
+    return fetch(apiURL + url, {
+      method,
+    })
+      .then((response) => response.json())
+      .catch((error) => modalOpen(error, "error"));
   }
-
-  fileTable.lastElementChild.firstElementChild.nextElementSibling.innerText = 0;
+  return fetch(apiURL + url, {
+    body: JSON.stringify(data),
+    method,
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((response) => response.json())
+    .catch((error) => modalOpen(error, "error"));
 };
 
-const syncFiles = (id, locationID) => {
-  const location = locationID == 1 ? "git" : "local";
-  const data = { id: String(id), loc: location };
-
-  document.body.style.cursor = "wait";
-  request("POST", "/sync", data).then((a) => {
-    if (a != "OK") {
-      modalOpen(a, "error");
-    } else {
-      clearFiles();
-      getFiles();
-      document.body.style.cursor = "auto";
-    }
-  });
-};
-
-const removeFile = (id) => {
-  const row = document.getElementById(id);
-  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
-  const data = { path: pathAndName };
-
-  request("DELETE", "/files", data).then((a) => {
-    if (a != "OK") {
-      modalOpen(a, "error");
-    } else {
-      clearFiles();
-      getFiles();
-      modalClose();
-    }
-  });
-};
-
-const removeDialog = (id) => {
-  const row = document.getElementById(id);
-  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
-
-  modalOpen(
-    "You're about to stop tracking <b>" + pathAndName + "</b> on this device.",
-    "confirm",
-    "Continue",
-    "removeFile(" + id + ")"
-  );
-};
-
-const addDialog = (element) => {
-  const path = element.elements["path"].value;
-  const name = element.elements["name"].value;
-
-  modalOpen(
-    "You're about to add tracking to <b>" +
-      path +
-      name +
-      "</b> on this device.",
-    "confirm",
-    "Continue",
-    "addFromInput()"
-  );
-};
-
-const addFromInput = () => {
-  const form = document.getElementsByClassName("fileadd")[0];
-  const pathAndName = form.elements["path"].value + form.elements["name"].value;
-  const data = { path: pathAndName };
-
-  request("POST", "/files", data).then((a) => {
-    if (a != "OK") {
-      modalClose();
-      modalOpen(a, "error");
-    } else {
-      clearFiles();
-      getFiles();
-      form.elements["path"].value = "";
-      form.elements["name"].value = "";
-      modalClose();
-    }
-  });
+const parseUpdateState = (updateState, id) => {
+  switch (updateState) {
+    case 0:
+      return "</p><a class='passive'>" + "File is in sync" + "</a>";
+    case 1:
+      return (
+        "</p><a onclick='syncDialog(" +
+        id +
+        ", 1)'>" +
+        "Arvuti -> Github" +
+        "</a>"
+      );
+    case 2:
+      return (
+        "</p><a onclick='syncDialog(" +
+        id +
+        ", 2)'>" +
+        "Github -> Arvuti" +
+        "</a>"
+      );
+    case 3:
+      return (
+        "</p><div class='splitbutton'><a onclick='syncDialog(" +
+        id +
+        ", 1)'>" +
+        "Arvuti -> Github" +
+        "</a>" +
+        "<a onclick='syncDialog(" +
+        id +
+        ", 2)'>" +
+        "Github -> Arvuti" +
+        "</a></div>"
+      );
+  }
 };
 
 const addFile = (name, path, updateState) => {
@@ -266,11 +144,157 @@ const addFile = (name, path, updateState) => {
   form.firstElementChild.nextElementSibling.innerText = Number(nextId) + 1;
 };
 
-document.onkeydown = function (e) {
-  if (e.key === "Escape") {
-    modalClose();
-  }
+const getFiles = () => {
+  request("GET", "/files", "").then((a) => {
+    a.map((b) => {
+      addFile(b.nimi, b.path, b.muudatus);
+    });
+  });
 };
+
+const clearFiles = () => {
+  const fileTable = document.getElementsByClassName("filetable")[0];
+  while (fileTable.childElementCount > 2) {
+    fileTable.removeChild(fileTable.firstElementChild.nextElementSibling);
+  }
+
+  fileTable.lastElementChild.firstElementChild.nextElementSibling.innerText = 0;
+};
+
+const removeFile = (id) => {
+  const row = document.getElementById(id);
+  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
+  const data = { path: pathAndName };
+
+  request("DELETE", "/files", data).then((a) => {
+    if (a !== "OK") {
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      modalClose();
+    }
+  });
+};
+
+const syncFiles = (id, locationID) => {
+  const location = Number(locationID) === 1 ? "git" : "local";
+  const data = { id: String(id), loc: location };
+
+  request("POST", "/sync", data).then((a) => {
+    if (a !== "OK") {
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      modalClose();
+    }
+  });
+};
+
+const getAuth = () => {
+  return request("GET", "/auth", "").then((a) => {
+    if (a === true || a === false) {
+      return a;
+    }
+    modalOpen(a, "error");
+    return false;
+  });
+};
+
+const submitAuth = (element) => {
+  setModalButton("loading", "auth");
+  const data = {
+    user: element.elements.username.value,
+    pass: element.elements.password.value,
+  };
+
+  request("POST", "/auth", data).then((response) => {
+    if (response === true) {
+      modalClose();
+      clearFiles();
+      getFiles();
+    } else {
+      setModalButton("failed", "auth");
+    }
+  });
+};
+
+const addDialog = (element) => {
+  const path = element.elements.path.value;
+  const name = element.elements.name.value;
+
+  modalOpen(
+    "You're about to add tracking to <b>" +
+      path +
+      name +
+      "</b> on this device.",
+    "confirm",
+    "Continue",
+    "addFromInput()"
+  );
+};
+
+const removeDialog = (id) => {
+  const row = document.getElementById(id);
+  const pathAndName = row.childNodes[3].innerText + row.childNodes[2].innerText;
+
+  modalOpen(
+    "You're about to stop tracking <b>" + pathAndName + "</b> on this device.",
+    "confirm",
+    "Continue",
+    "removeFile(" + id + ")"
+  );
+};
+
+const syncDialog = (id, locationID) => {
+  const location =
+    Number(locationID) === 1 ? "this devive to Git" : "Git to this device";
+  const name = document.getElementById(id).childNodes[2].innerText;
+
+  modalOpen(
+    "Are you sure you want to copy <b>" +
+      name +
+      "</b> from <b>" +
+      location +
+      "</b>?",
+    "confirm",
+    "Yes",
+    "syncFiles(" + id + ", " + locationID + ")"
+  );
+};
+
+const authDialog = () => {
+  getAuth().then((response) => {
+    if (!response) {
+      modalOpen(
+        "<b>Please provide your GitHub credentials.</b> <br/> <br/> Access tokens are preferred <a>https://github.com/settings/tokens</a>",
+        "login"
+      );
+    }
+  });
+};
+
+const addFromInput = () => {
+  const form = document.getElementsByClassName("fileadd")[0];
+  const pathAndName = form.elements.path.value + form.elements.name.value;
+  const data = { path: pathAndName };
+
+  request("POST", "/files", data).then((a) => {
+    if (a !== "OK") {
+      modalClose();
+      modalOpen(a, "error");
+    } else {
+      clearFiles();
+      getFiles();
+      form.elements.path.value = "";
+      form.elements.name.value = "";
+      modalClose();
+    }
+  });
+};
+
+document.onkeydown = closeModalOnButtonPress;
 
 authDialog();
 getFiles();
