@@ -224,7 +224,7 @@ public class App {
                     ServerThread server = new ServerThread(repo, failisüsteem);
                     Thread t = new Thread(server);
                     t.start();
-                    System.out.println("Server started on localhost:4567!");
+                    System.out.println("Server started on localhost:4567");
                     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                         Desktop.getDesktop().browse(new URI("http://localhost:4567/"));
                     }
