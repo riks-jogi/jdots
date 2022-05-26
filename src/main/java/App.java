@@ -10,6 +10,8 @@ import java.net.URI;
  * Peamine klass kasutajaliidese elementide jaoks.
  */
 public class App {
+    private static Scanner scan = new Scanner(System.in);
+
     /**
      * Kasutajaliides Git autentimise jaoks.
      * Kasutajal on võimalus täpsustada kasutajanimi ja parool keskkonnamuutujatega, et vältida nende trükkimist.
@@ -20,18 +22,15 @@ public class App {
     private static void gitAuth(GitWrangler repo) {
         // Tegeleb git autentimisega
         // TODO: SSH authentication
-
-        try (Scanner scan = new Scanner(System.in)) {
-            if (!Objects.equals(System.getenv("GIT_USER"), null)) {
-                System.out.println("Using ENV credentials for: " + System.getenv("GIT_USER"));
-                repo.auth();
-            } else {
-                System.out.println("Git username: ");
-                String user = scan.nextLine();
-                System.out.println("Git password: ");
-                String pass = scan.nextLine();
-                repo.auth(user, pass);
-            }
+        if (!Objects.equals(System.getenv("GIT_USER"), null)) {
+            System.out.println("Using ENV credentials for: " + System.getenv("GIT_USER"));
+            repo.auth();
+        } else {
+            System.out.println("Git username: ");
+            String user = scan.nextLine();
+            System.out.println("Git password: ");
+            String pass = scan.nextLine();
+            repo.auth(user, pass);
         }
     }
 
@@ -42,17 +41,16 @@ public class App {
      * @param repo GitWrangleri isend
      */
     private static void gitPull(GitWrangler repo) {
-        try (Scanner scan = new Scanner(System.in)) {
-            gitAuth(repo);
-            while (!repo.testAuth()) {
-                System.out.println("Authentication failed!");
-                System.out.println("Retry? Y/n  ");
-                String r = scan.nextLine();
-                if (Objects.equals(r, "y") || Objects.equals(r, "Y") || Objects.equals(r, "")) {
-                    gitAuth(repo);
-                } else {
-                    return;
-                }
+
+        gitAuth(repo);
+        while (!repo.testAuth()) {
+            System.out.println("Authentication failed!");
+            System.out.println("Retry? Y/n  ");
+            String r = scan.nextLine();
+            if (Objects.equals(r, "y") || Objects.equals(r, "Y") || Objects.equals(r, "")) {
+                gitAuth(repo);
+            } else {
+                return;
             }
         }
 
@@ -79,7 +77,7 @@ public class App {
      *
      * @param failisüsteem main funktsioonis defineeritud FileWrangler isend
      */
-    private static void fileSyncDialog(FileWrangler failisüsteem, Scanner scan, DotFile fail) throws Exception {
+    private static void fileSyncDialog(FileWrangler failisüsteem, DotFile fail) throws Exception {
         System.out.println("File\tPath\t\t\tChanged in");
 
         int muutuseKoht = fail.getMuudatus();
@@ -143,19 +141,17 @@ public class App {
      * @param task         "add" või "remove", olenevalt mida kasutaja valis
      */
     private static boolean addOrRemoveFile(FileWrangler failisüsteem, String task) {
-        try (Scanner scan = new Scanner(System.in)) {
-            System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
-            String dotFailPath = scan.nextLine();
-            try {
-                if (Objects.equals(task, "add")) failisüsteem.lisaDotfail(dotFailPath);
-                else if (Objects.equals(task, "remove")) failisüsteem.eemaldaDotfail(dotFailPath);
+        System.out.println("Type file path and name: (ex. /home/username/.ssh/config)");
+        String dotFailPath = scan.nextLine();
+        try {
+            if (Objects.equals(task, "add")) failisüsteem.lisaDotfail(dotFailPath);
+            else if (Objects.equals(task, "remove")) failisüsteem.eemaldaDotfail(dotFailPath);
 
-                System.out.printf("'%s' was %s\n", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
-                return true;
-            } catch (Exception e) {
-                System.out.printf("'%s' not found\n", dotFailPath);
-                return false;
-            }
+            System.out.printf("'%s' was %s\n", dotFailPath, Objects.equals(task, "add") ? "added" : "removed");
+            return true;
+        } catch (Exception e) {
+            System.out.printf("'%s' not found\n", dotFailPath);
+            return false;
         }
     }
 
@@ -170,7 +166,6 @@ public class App {
      * 5. Eemalda fail indeksist
      */
     public static void main(String[] args) throws Exception {
-        Scanner scan = new Scanner(System.in);
         String gitPath = "./.data/";
         String databasePath = "./fileindex";
 
@@ -202,7 +197,7 @@ public class App {
                 case "3":
                     List<DotFile> uuendatudFailid = failisüsteem.leiaUuendused();
                     for (DotFile fail : uuendatudFailid) {
-                        fileSyncDialog(failisüsteem, scan, fail);
+                        fileSyncDialog(failisüsteem, fail);
                     }
 
                     failisüsteem.salvestaNimedJaChecksumid();
@@ -242,6 +237,7 @@ public class App {
                 case "e":
                 case "E":
                     System.out.println("Exiting..");
+                    scan.close();
                     break ui;
                 default:
                     System.out.printf("Command '%s' not found", action);
