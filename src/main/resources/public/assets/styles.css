@@ -130,19 +130,29 @@ form .filebutton {
 
 .modal.confirm,
 .modal.error,
-.modal.login {
+.modal.login,
+.modal.warn {
   opacity: 1;
   z-index: unset;
 }
 
 .modal.confirm ~ .gui form div.input-box,
 .modal.error ~ .gui form div.input-box,
-.modal.login ~ .gui form div.input-box {
+.modal.login ~ .gui form div.input-box,
+.modal.warn ~ .gui form div.input-box {
   z-index: -1;
 }
 
 .modal.error .lightsout {
   background-color: rgb(92, 43, 43, 0.7);
+}
+
+.modal.login .lightsout {
+  background-color: rgba(11, 21, 34, 0.8);
+}
+
+.modal.warn .lightsout {
+  background-color: rgba(92, 75, 43, 0.7);
 }
 
 .modal.confirm {
@@ -161,12 +171,19 @@ form .filebutton {
     ". . button1 button1 . .";
 }
 
-.modal.login .lightsout {
-  background-color: rgba(11, 21, 34, 0.8);
+.modal.confirm {
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    ". text text text text ."
+    ". . loading loading . .";
+}
+
+.modal.warn a.modalbutton {
+  display: none;
 }
 
 .modal.login a.modalbutton,
-.modal.lightsout img {
+.modal.login img {
   display: none;
 }
 
@@ -245,6 +262,10 @@ form .filebutton {
   text-align: center;
 }
 
+.modal a {
+  text-decoration: none;
+}
+
 .modal a.modalbutton {
   grid-area: button2;
   place-self: start center;
@@ -265,8 +286,8 @@ form .filebutton {
   grid-area: button1;
 }
 
-.modal a.modalbutton:hover,
-.modal a.modalbutton:active {
+.modal a:hover,
+.modal a:active {
   cursor: pointer;
   opacity: 0.7;
 }

@@ -265,10 +265,13 @@ const syncDialog = (id, locationID) => {
 };
 
 const authDialog = () => {
+  modalOpen("Trying to log in to GitHub", "warn");
+  setModalButton("loading", "");
   getAuth().then((response) => {
+    modalClose();
     if (!response) {
       modalOpen(
-        "<b>Please provide your GitHub credentials.</b> <br/> <br/> Access tokens are preferred <a>https://github.com/settings/tokens</a>",
+        "<b>Please provide your GitHub credentials.</b> <br/> <br/> <a href='https://github.com/settings/tokens' target=-_blank' rel='noopener noreferrer'>Generate access token</a>",
         "login"
       );
     }

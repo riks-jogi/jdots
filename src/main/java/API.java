@@ -1,10 +1,15 @@
-import com.google.gson.Gson;
+import static spark.Spark.delete;
+import static spark.Spark.get;
+import static spark.Spark.path;
+import static spark.Spark.post;
+import static spark.Spark.staticFiles;
+import static spark.Spark.stop;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-import static spark.Spark.*;
+import com.google.gson.Gson;
 
 public class API {
     public static void start(GitWrangler git, FileWrangler file) {
