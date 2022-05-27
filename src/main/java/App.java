@@ -171,7 +171,7 @@ public class App {
 
         // Banner and version info
         String banner = "     _     _       _       \r\n    | | __| | ___ | |_ ___ \r\n _  | |/ _` |/ _ \\| __/ __|\r\n| |_| | (_| | (_) | |_\\__ \\\r\n \\___/ \\__,_|\\___/ \\__|___/\n";
-        String version = "0.1.0";
+        String version = "1.0.0";
         System.out.println(banner);
         System.out.println("By MMK & rjogi");
         System.out.printf("Version: %s\n", version);
