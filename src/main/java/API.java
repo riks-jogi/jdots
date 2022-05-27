@@ -104,9 +104,12 @@ public class API {
                     try {
                         res.type("application/json");
                         res.header("Access-Control-Allow-Origin", "*");
-
                         res.status(200);
-                        return git.testAuth();
+
+                        if (git.testAuth()) return true;
+
+                        git.auth(); // Proovib sisse logid env muutujatega
+                        return git.testAuth(); // Tagastab kas env muutujate login töötas
                     } catch (Exception e) {
                         res.status(400);
                         return e.toString();
