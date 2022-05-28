@@ -1,9 +1,4 @@
-# <picture><source media="(prefers-color-scheme: light)" srcset="/riks-jogi/jdots/raw/master/assets/JdotsLogo_dark.png"><img height="70px" alt="Jdots" src="/riks-jogi/jdots/raw/master/assets/JdotsLogo.png"></picture> &nbsp; Sync your configs. Skip the boring parts.
-
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/riks-jogi/jdots/pulls)
-![License](https://img.shields.io/github/license/riks-jogi/Jdots) 
-![Downloads](https://img.shields.io/github/downloads/riks-jogi/Jdots/total)
-<a href="https://jdots.j6gi.ee"><strong>Visit projects site »</strong></a>
+# <picture><source media="(prefers-color-scheme: light)" srcset="/riks-jogi/jdots/raw/master/assets/JdotsLogo_dark.png"><img height="70px" alt="Jdots" src="/riks-jogi/jdots/raw/master/assets/JdotsLogo.png"></picture> &nbsp; [![Website](https://img.shields.io/website?down_message=page%20down%20%3A%2F&up_message=online&url=https%3A%2F%2Fjdots.j6gi.ee)](https://jdots.j6gi.ee) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/riks-jogi/jdots/pulls) ![License](https://img.shields.io/github/license/riks-jogi/Jdots) ![Downloads](https://img.shields.io/github/downloads/riks-jogi/Jdots/total) <p> Sync your configs. Skip the boring parts.</p>
 
 <p align="center">
   <img src='assets/JdotsWeb.png' width='73%'>
@@ -12,9 +7,11 @@
 
 
 ## About The Project
-Simply put, Jdots is a program for synchronising and quickly deploying configuration files (also called dotfiles)
+Simply put, Jdots is a program for synchronising and quickly deploying configuration files (also called dotfiles).
 
 We use a Git repo to synchronise the files between machines and our program takes care of the tedious copying and replacing files while keeping the user "in the loop" for important decisions.
+
+Make these decisions how you want. CLI or GUI, which ever you prefer.
 
 Every transaction is a Git commit so undoing mistakes or reverting to older versions is easy. (Right now this has to be done manually using Git)
 
