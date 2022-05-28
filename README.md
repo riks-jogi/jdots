@@ -1,5 +1,4 @@
-# <picture><source media="(prefers-color-scheme: light)" srcset="/riks-jogi/jdots/raw/master/assets/JdotsLogo_dark.png"><img height="100px" alt="Jdots" src="/riks-jogi/jdots/raw/master/assets/JdotsLogo.png"></picture> &nbsp;&nbsp; Sync your configs. Skip the boring parts.
-
+# <picture><source media="(prefers-color-scheme: light)" srcset="/riks-jogi/jdots/raw/master/assets/JdotsLogo_dark.png"><img height="70px" alt="Jdots" src="/riks-jogi/jdots/raw/master/assets/JdotsLogo.png"></picture> &nbsp; Sync your configs. Skip the boring parts.
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/riks-jogi/jdots/pulls)
 ![License](https://img.shields.io/github/license/riks-jogi/Jdots) 
