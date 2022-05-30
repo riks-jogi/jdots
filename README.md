@@ -65,6 +65,8 @@ Features that we'd like to add in the future:
 
 Pull requests and issues are welcome and encouraged.
 
+All comments and some variables are in estonian. We are planning on translating them in the future. In the mean time you can write to us and we'll gladly explain/translate the code.
+
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](https://github.com/riks-jogi/Jdots/blob/main/LICENSE.md) for more information.
