@@ -60,6 +60,7 @@ Features that we'd like to add in the future:
   - Ability to use CLI with relative paths
   - Periodic checks in the background
     - Notifying user when change is detected
+- Sync entire config folders. Including themes, plugins ect.
 
 ## Contributing
 
