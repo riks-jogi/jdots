@@ -250,7 +250,7 @@ const removeDialog = (id) => {
 
 const syncDialog = (id, locationID) => {
   const location =
-    Number(locationID) === 1 ? "this devive to Git" : "Git to this device";
+    Number(locationID) === 1 ? "this device to Git" : "Git to this device";
   const name = document.getElementById(id).childNodes[2].innerText;
 
   modalOpen(
