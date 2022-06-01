@@ -61,6 +61,11 @@ Features that we'd like to add in the future:
   - Periodic checks in the background
     - Notifying user when change is detected
 - Sync entire config folders. Including themes, plugins ect.
+- Ability to set aliases for tracked files (or folders).
+  - Right now `.conf: path/to/file/` and `.conf: path/to/otherfile/` are hard to tell apart
+    - Both have the same name
+  - Easier if we replace name with an alias and combine the path and previous name
+    - `.conf: path/to/file/` -> `file1: path/to/file/.conf`
 
 ## Contributing
 
