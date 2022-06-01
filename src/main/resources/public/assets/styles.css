@@ -171,7 +171,7 @@ form .filebutton {
     ". . button1 button1 . .";
 }
 
-.modal.confirm {
+.modal.warn {
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     ". text text text text ."

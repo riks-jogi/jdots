@@ -224,10 +224,11 @@ const addDialog = (element) => {
   const path = element.elements.path.value;
   const name = element.elements.name.value;
 
+  const pathAndName = path.endsWith("/") ? path + name : path + "/" + name;
+
   modalOpen(
     "You're about to add tracking to <b>" +
-      path +
-      name +
+      pathAndName +
       "</b> on this device.",
     "confirm",
     "Continue",
@@ -280,7 +281,9 @@ const authDialog = () => {
 
 const addFromInput = () => {
   const form = document.getElementsByClassName("fileadd")[0];
-  const pathAndName = form.elements.path.value + form.elements.name.value;
+  const pathAndName = form.elements.path.value.endsWith("/")
+    ? form.elements.path.value + form.elements.name.value
+    : form.elements.path.value + "/" + form.elements.name.value;
   const data = { path: pathAndName };
 
   request("POST", "/files", data).then((a) => {
