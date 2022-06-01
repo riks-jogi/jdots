@@ -20,7 +20,7 @@ Every transaction is a Git commit so undoing mistakes or reverting to older vers
 ### Prerequisites
 
 1. Local installation of:
-    1. <a href="https://java.com/en/download/">Java</a> to run the app.
+    1. <a href="https://www.oracle.com/java/technologies/downloads/#jdk18">JDK 11 or newer</a> to run the app.
     2. <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git</a> to sync files.
 2. A git repo for your soon to be synced config files.
 3. A <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">personal access token</a> with "repo" permissions. **Save the token for later.**
