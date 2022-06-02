@@ -21,6 +21,7 @@ public class API {
                     try {
                         res.type("application/json");
                         res.header("Access-Control-Allow-Origin", "*");
+                        git.pullRemote();
                         file.leiaUuendused();
 
                         res.status(200);
